@@ -1,10 +1,84 @@
 'use client';
 
 import { useState } from 'react';
-import { Mic, Camera, FileUp, CheckCircle2, Clock } from 'lucide-react';
+import { Camera, FileUp, CheckCircle2, Clock } from 'lucide-react';
+import { AudioRecorder } from '@/components/ui/AudioRecorder';
 
 export default function WorkerView() {
-  const [isRecording, setIsRecording] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+
+  const handleRecordingComplete = async (audioBlob: Blob) => {
+    setIsUploading(true);
+    setUploadStatus('Wird hochgeladen...');
+
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('workerId', 'worker-123');
+      formData.append('shift', '2');
+
+      // Upload
+      const uploadRes = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
+
+      if (!uploadData.success) {
+        throw new Error('Upload failed');
+      }
+
+      setUploadStatus('Transkribiere...');
+
+      // Transcribe
+      const transcribeRes = await fetch('/api/transcribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioUrl: uploadData.audioUrl,
+          language: 'pl',
+        }),
+      });
+      const transcribeData = await transcribeRes.json();
+
+      setUploadStatus('KI analysiert...');
+
+      // Process
+      const processRes = await fetch('/api/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transcript: transcribeData.transcript,
+          workerId: 'worker-123',
+          workerName: 'Piotr Kowalski',
+          role: 'Baggerfahrer',
+          shift: 2,
+          metadata: {
+            audioUrl: uploadData.audioUrl,
+          },
+        }),
+      });
+      const processData = await processRes.json();
+
+      setUploadStatus('Erfasst!');
+
+      // Auto-dismiss after 2 seconds
+      setTimeout(() => {
+        setUploadStatus(null);
+        setIsUploading(false);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Workflow error:', error);
+      setUploadStatus('Fehler - bitte erneut versuchen');
+      setTimeout(() => {
+        setUploadStatus(null);
+        setIsUploading(false);
+      }, 3000);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto p-4 pb-24 space-y-6">
@@ -31,37 +105,30 @@ export default function WorkerView() {
         </button>
       </div>
 
-      {/* Voice Input Area */}
-      <div className="luxury-card p-6 flex flex-col items-center justify-center text-center space-y-4">
-        <button
-          onClick={() => setIsRecording(!isRecording)}
-          className={`w-24 h-24 rounded-full flex items-center justify-center cursor-pointer transition-all border ${
-            isRecording
-              ? 'bg-red-500/20 border-red-500/50 animate-pulse'
-              : 'bg-lime-glow/10 border-lime-glow/30 hover:bg-lime-glow/20'
-          } relative group`}
-        >
-          <Mic className={`w-10 h-10 ${isRecording ? 'text-red-500' : 'text-lime-glow'}`} />
-        </button>
-        <div>
-          <p className="font-bold text-lg mb-1">
-            {isRecording ? 'Aufnahme läuft...' : 'Sprachnotiz aufnehmen'}
-          </p>
-          <p className="text-xs text-stone-400">
-            {isRecording ? '00:05' : '"Wir brauchen mehr Schotter an Gleis 4..."'}
-          </p>
+      {/* Upload Status */}
+      {uploadStatus && (
+        <div className="luxury-card p-4 text-center">
+          <p className="text-sm font-bold text-lime-glow">{uploadStatus}</p>
         </div>
+      )}
 
-        <div className="flex gap-4 w-full mt-4">
-          <button className="flex-1 py-4 rounded-xl bg-forest-50 dark:bg-night-800 border border-forest-100 dark:border-night-700 flex items-center justify-center gap-2 hover:bg-forest-100 dark:hover:bg-night-700 transition-colors">
-            <Camera className="w-5 h-5 text-forest-600 dark:text-stone-300" />
-            <span className="text-sm font-bold">Foto</span>
-          </button>
-          <button className="flex-1 py-4 rounded-xl bg-forest-50 dark:bg-night-800 border border-forest-100 dark:border-night-700 flex items-center justify-center gap-2 hover:bg-forest-100 dark:hover:bg-night-700 transition-colors">
-            <FileUp className="w-5 h-5 text-forest-600 dark:text-stone-300" />
-            <span className="text-sm font-bold">Datei</span>
-          </button>
-        </div>
+      {/* Audio Recorder */}
+      <AudioRecorder
+        onRecordingComplete={handleRecordingComplete}
+        workerId="worker-123"
+        shift={2}
+      />
+
+      {/* Additional Actions */}
+      <div className="flex gap-4 w-full">
+        <button className="flex-1 py-4 rounded-xl bg-forest-50 dark:bg-night-800 border border-forest-100 dark:border-night-700 flex items-center justify-center gap-2 hover:bg-forest-100 dark:hover:bg-night-700 transition-colors">
+          <Camera className="w-5 h-5 text-forest-600 dark:text-stone-300" />
+          <span className="text-sm font-bold">Foto</span>
+        </button>
+        <button className="flex-1 py-4 rounded-xl bg-forest-50 dark:bg-night-800 border border-forest-100 dark:border-night-700 flex items-center justify-center gap-2 hover:bg-forest-100 dark:hover:bg-night-700 transition-colors">
+          <FileUp className="w-5 h-5 text-forest-600 dark:text-stone-300" />
+          <span className="text-sm font-bold">Datei</span>
+        </button>
       </div>
 
       {/* Recent Entries */}
