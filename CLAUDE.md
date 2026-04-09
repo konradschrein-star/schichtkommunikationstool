@@ -86,6 +86,7 @@ Wenn ein Audio-Blob ankommt:
 - [ ] Tests schreiben (aktuell 0 Tests)
 
 ### 📝 DEPLOYMENT NOTES
+- **GitHub Repo:** https://github.com/konradschrein-star/schichtkommunikationstool
 - **Server:** Hetzner 65.108.6.149
 - **Domain:** https://schichtkommunikationstool.schreinercontentsystems.com
 - **SSH Key:** In separatem File (nicht im Repo!)
