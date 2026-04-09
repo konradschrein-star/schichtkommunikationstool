@@ -7,10 +7,10 @@ import { SAMPLE_REPORTS } from '@/lib/fallback-data';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const filepath = path.join(process.cwd(), 'data', 'reports', `${id}.md`);
 
     if (!existsSync(filepath)) {

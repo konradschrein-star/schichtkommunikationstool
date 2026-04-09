@@ -45,25 +45,54 @@ export async function POST(request: NextRequest) {
 
     try {
       // Try real agent processing
-      const { runAgentWorkflow } = await import('@/src/agents/workflow');
+      const { processWorkerReport } = await import('@/src/agents/workflow');
+      const apiKey = process.env.GEMINI_API_KEY || process.env.ANTHROPIC_API_KEY || '';
 
-      const result = await runAgentWorkflow({
+      if (!apiKey) {
+        throw new Error('No API key configured');
+      }
+
+      const result = await processWorkerReport(
         transcript,
-        workerId,
-        shift,
-      });
+        {
+          workerId,
+          workerName: workerName || 'Unbekannt',
+          profession: role,
+          shiftId: `shift-${shift}`,
+          shiftType: shift === 1 ? 'DAY' : 'NIGHT',
+          language: 'de', // Default to German, could be detected
+        },
+        apiKey,
+        process.env.GEMINI_API_KEY ? 'gemini' : 'anthropic'
+      );
 
       // Check if QA agent needs follow-up
-      if (result.needsFollowUp) {
+      if (!result.qaResult.isComplete) {
         return NextResponse.json({
           success: true,
           needsFollowUp: true,
-          qaQuestion: result.qaQuestion,
+          qaQuestion: result.qaResult.suggestedQuestions[0] || 'Bitte geben Sie mehr Details an.',
         });
       }
 
       // Save processed report
       const reportId = `report-${Date.now()}`;
+      const content = result.cleanerResult?.cleanedText || transcript;
+
+      // Extract tags from structured data
+      const tags: string[] = [];
+      if (result.cleanerResult?.structuredData.taskType) {
+        tags.push(result.cleanerResult.structuredData.taskType);
+      }
+      if (result.cleanerResult?.structuredData.hindrances && result.cleanerResult.structuredData.hindrances.length > 0) {
+        tags.push('Verzögerung');
+      }
+
+      // Calculate costs and delays from hindrances
+      const hindrances = result.cleanerResult?.structuredData.hindrances || [];
+      const totalCost = hindrances.reduce((sum, h) => sum + (h.estimatedCostEUR || 0), 0);
+      const delayHours = hindrances.length > 0 ? hindrances.length * 0.5 : undefined; // Estimate
+
       await saveMarkdownReport({
         id: reportId,
         mitarbeiter: workerName || 'Unbekannt',
@@ -72,13 +101,13 @@ export async function POST(request: NextRequest) {
         datum: new Date().toISOString().split('T')[0],
         zeit: new Date().toISOString().split('T')[1].split('.')[0],
         schicht: shift,
-        tags: result.tags || [],
+        tags: tags.length > 0 ? tags : ['Allgemein'],
         audio_url: metadata?.audioUrl,
         image_urls: metadata?.imageUrl ? [metadata.imageUrl] : [],
         status: 'processed',
-        delay_hours: result.delayHours,
-        estimated_cost: result.estimatedCost,
-      }, result.markdown);
+        delay_hours: delayHours,
+        estimated_cost: totalCost > 0 ? totalCost : undefined,
+      }, content);
 
       return NextResponse.json({
         success: true,

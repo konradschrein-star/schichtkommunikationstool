@@ -20,15 +20,15 @@ export async function POST(request: NextRequest) {
 
     try {
       // Try real transcription (import dynamically to avoid errors if service not ready)
-      const { transcribe } = await import('@/src/lib/whisper');
-      const transcript = await transcribe(audioPath, language);
+      const { transcribeAudio } = await import('@/src/lib/whisper');
+      const result = await transcribeAudio(audioPath, { language: language as 'de' | 'pl' | 'auto' });
 
       return NextResponse.json({
         success: true,
-        transcript,
+        transcript: result.transcript,
         confidence: 0.95,
-        language,
-        duration: 10,
+        language: result.language,
+        duration: result.duration,
       });
 
     } catch (whisperError) {
