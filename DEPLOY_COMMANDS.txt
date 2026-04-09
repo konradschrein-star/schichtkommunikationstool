@@ -1,0 +1,52 @@
+# ShiftSync MVP - Server Deployment Commands
+
+## Schritt 1: Upload (auf deinem Laptop)
+# Archive ist schon erstellt: /tmp/shiftsync-mvp-deploy.tar.gz
+
+scp -i ~/.ssh/id_hetzner /tmp/shiftsync-mvp-deploy.tar.gz root@65.108.6.149:/tmp/
+
+## Schritt 2: SSH zum Server
+
+ssh -i ~/.ssh/id_hetzner root@65.108.6.149
+
+## Schritt 3: Deployment auf dem Server ausführen
+
+# Backup der alten Version
+cd /opt
+mv schichtkommunikationstool schichtkommunikationstool-backup-$(date +%Y%m%d-%H%M%S)
+
+# Neues Verzeichnis erstellen
+mkdir schichtkommunikationstool
+cd schichtkommunikationstool
+
+# Archive entpacken
+tar -xzf /tmp/shiftsync-mvp-deploy.tar.gz
+
+# Deployment-Script ausführen
+chmod +x deploy.sh
+./deploy.sh
+
+# Demo-Daten laden
+npm run seed-demo
+
+## Schritt 4: Testen
+
+# Öffne in Browser:
+https://schichtkommunikationstool.schreinercontentsystems.com
+
+# Du solltest sehen:
+# - Neue Login-Seite mit 3 Rollen
+# - Dark Mode Design
+# - Worker View mit Mikrofon
+# - Boss View mit KPI Dashboard
+
+## Troubleshooting
+
+# Falls PM2 nicht startet:
+pm2 logs schichtkommunikationstool
+
+# Falls Docker Probleme macht:
+docker compose -f docker-compose.prod.yml logs
+
+# Service neu starten:
+pm2 restart schichtkommunikationstool
