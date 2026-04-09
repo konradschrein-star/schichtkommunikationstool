@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#5ce155",
+                        danger: "#ff4d4d",
+                        warning: "#ffcc00",
+                        surface: "#131313",
+                        background: "#0e0e0e"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk", "sans-serif"],
+                        "body": ["Public Sans", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #5ce155; }
+    </style>
+</head>
+<body class="bg-[#0e0e0e] text-gray-200 font-body selection:bg-[#5ce155] selection:text-black">
+<!-- TopAppBar -->
+<header class="bg-[#131313]/60 backdrop-blur-xl text-[#5ce155] font-['Space_Grotesk'] tracking-tight docked full-width top-0 z-50 bg-[#0e0e0e] shadow-[0_4px_24px_rgba(0,0,0,0.6)] flex justify-between items-center w-full px-6 h-16 fixed">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tighter text-[#5ce155]">CONSTRUCT_OS</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex items-center gap-6">
+<a class="text-gray-500 py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer active:scale-95 duration-200" href="#">Dashboard</a>
+<a class="text-gray-500 py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer active:scale-95 duration-200" href="#">Protokolle</a>
+<a class="text-[#5ce155] font-bold border-b-2 border-[#5ce155] py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] cursor-pointer active:scale-95 duration-200" href="#">Finanzen</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined cursor-pointer hover:bg-[#131313] hover:text-[#5ce155] transition-all p-2 rounded-full">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-[#ff4d4d] rounded-full"></span>
+</div>
+<span class="material-symbols-outlined cursor-pointer hover:bg-[#131313] hover:text-[#5ce155] transition-all p-2 rounded-full">settings</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-[#131313] hover:text-[#5ce155] transition-all p-2 rounded-full">account_circle</span>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="bg-[#0e0e0e] h-screen w-64 fixed left-0 top-0 z-40 bg-[#131313] flex flex-col h-full py-8 hidden md:flex border-r border-white/5">
+<div class="px-6 mb-10 mt-16">
+<h2 class="text-[#5ce155] font-['Space_Grotesk'] font-bold text-lg tracking-tight">Command Center</h2>
+<p class="text-gray-500 text-[10px] uppercase tracking-[0.2em]">Station Nord-West</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="text-gray-500 py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer group flex items-center gap-3">
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 duration-300">dashboard</span>
+<span>Dashboard</span>
+</div>
+<div class="text-gray-500 py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer group flex items-center gap-3">
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 duration-300">description</span>
+<span>Protokolle</span>
+</div>
+<div class="text-gray-500 py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer group flex items-center gap-3">
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 duration-300">conveyor_belt</span>
+<span>Materialfluss</span>
+</div>
+<div class="text-gray-500 py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer group flex items-center gap-3">
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 duration-300">engineering</span>
+<span>Personal-KPI</span>
+</div>
+<div class="text-[#5ce155] border-l-4 border-[#5ce155] bg-[#131313] py-4 px-6 font-['Inter'] uppercase tracking-widest text-[10px] cursor-pointer group flex items-center gap-3">
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 duration-300">payments</span>
+<span>Finanzen</span>
+</div>
+</nav>
+<div class="px-6 mb-6">
+<button class="w-full bg-[#5ce155] text-black font-bold py-3 px-4 rounded flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all text-[11px] uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                KI Analyse
+            </button>
+</div>
+<div class="border-t border-white/5 pt-4">
+<div class="text-gray-500 py-3 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">help</span>
+<span>Support</span>
+</div>
+<div class="text-gray-500 py-3 px-6 font-['Inter'] uppercase tracking-widest text-[10px] hover:bg-[#131313] hover:text-white transition-colors cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">sensors</span>
+<span>System-Status</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:ml-64 pt-24 px-6 pb-12">
+<!-- Dashboard Header -->
+<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-4xl font-black font-headline text-white tracking-tighter uppercase mb-2">Finanz-Impact <span class="text-[#5ce155]">&amp;</span> Abrechnung</h1>
+<p class="text-gray-400 font-label tracking-widest uppercase text-xs">Echtzeit-Analyse der finanziellen Leckagen &amp; Potenziale</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface p-4 border-l-4 border-danger">
+<p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Verlorene Kohle (MTD)</p>
+<p class="text-2xl font-bold text-danger font-headline">- 12.450,00 €</p>
+</div>
+<div class="bg-surface p-4 border-l-4 border-primary">
+<p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Potenzial (Open Bills)</p>
+<p class="text-2xl font-bold text-primary font-headline">+ 48.200,00 €</p>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- 1. Potenzial Abrechnungswert (Large Card) -->
+<div class="md:col-span-8 bg-surface p-8 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-6">
+<span class="w-3 h-3 bg-primary rounded-full animate-pulse"></span>
+<h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Potenzieller Abrechnungswert (Ungeplant)</h2>
+</div>
+<div class="flex flex-col md:flex-row items-baseline gap-4 mb-8">
+<span class="text-6xl font-black text-white font-headline">84.320,50€</span>
+<span class="bg-primary/10 text-primary text-[10px] px-2 py-1 font-bold rounded">+12% vs. Vormonat</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-black/40 p-4 border border-white/5">
+<p class="text-[10px] text-gray-500 uppercase mb-1">Dokumentierte Mehrarbeit</p>
+<p class="font-bold text-white">52.400€</p>
+</div>
+<div class="bg-black/40 p-4 border border-white/5">
+<p class="text-[10px] text-gray-500 uppercase mb-1">Nachtrags-Entwürfe</p>
+<p class="font-bold text-white">18.120€</p>
+</div>
+<div class="bg-black/40 p-4 border border-white/5">
+<p class="text-[10px] text-gray-500 uppercase mb-1">Abnahme-Überhang</p>
+<p class="font-bold text-white">9.800€</p>
+</div>
+<div class="bg-black/40 p-4 border border-white/5">
+<p class="text-[10px] text-gray-500 uppercase mb-1">Skonto-Risiko</p>
+<p class="font-bold text-danger">4.000€</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Material-Effizienz-Index -->
+<div class="md:col-span-4 bg-surface p-8 rounded-xl flex flex-col justify-between border-t border-warning/30">
+<div>
+<div class="flex justify-between items-start mb-6">
+<h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Material-Effizienz-Index</h2>
+<span class="material-symbols-outlined text-warning">inventory_2</span>
+</div>
+<div class="text-center py-4">
+<div class="inline-flex items-center justify-center w-32 h-32 rounded-full border-8 border-warning/20 border-t-warning relative">
+<span class="text-3xl font-black text-white">84<span class="text-sm text-gray-500">%</span></span>
+</div>
+</div>
+</div>
+<div class="space-y-3 mt-6">
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
+<span class="text-gray-500">Verschnitt-Rate</span>
+<span class="text-danger">4.2%</span>
+</div>
+<div class="w-full bg-black/40 h-1">
+<div class="bg-danger h-full" style="width: 42%"></div>
+</div>
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
+<span class="text-gray-500">Recycling-Quote</span>
+<span class="text-primary">91%</span>
+</div>
+<div class="w-full bg-black/40 h-1">
+<div class="bg-primary h-full" style="width: 91%"></div>
+</div>
+</div>
+</div>
+<!-- 5. Leakage-Trend (Visual Chart Mockup) -->
+<div class="md:col-span-12 bg-surface p-8 rounded-xl">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Interaktiver Leakage-Trend</h2>
+<p class="text-[10px] text-gray-500 mt-1">Identifizierte Verlustquellen der letzten 30 Tage</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-black px-3 py-1 text-[10px] text-primary border border-primary/20 uppercase font-bold">Woche</button>
+<button class="bg-[#1a1a1a] px-3 py-1 text-[10px] text-gray-500 uppercase font-bold">Monat</button>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-2 px-4 relative">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none px-4">
+<div class="border-t border-white w-full"></div>
+<div class="border-t border-white w-full"></div>
+<div class="border-t border-white w-full"></div>
+<div class="border-t border-white w-full"></div>
+</div>
+<!-- Chart Bars -->
+<div class="relative group w-full h-[40%] bg-danger/20 hover:bg-danger/40 transition-all border-t-2 border-danger flex items-end justify-center">
+<span class="absolute -top-6 text-[10px] font-bold text-danger opacity-0 group-hover:opacity-100">-1.2k</span>
+<span class="absolute bottom-[-24px] text-[8px] uppercase tracking-tighter text-gray-500">KW 14</span>
+</div>
+<div class="relative group w-full h-[60%] bg-danger/20 hover:bg-danger/40 transition-all border-t-2 border-danger flex items-end justify-center">
+<span class="absolute -top-6 text-[10px] font-bold text-danger opacity-0 group-hover:opacity-100">-2.4k</span>
+<span class="absolute bottom-[-24px] text-[8px] uppercase tracking-tighter text-gray-500">KW 15</span>
+</div>
+<div class="relative group w-full h-[35%] bg-danger/20 hover:bg-danger/40 transition-all border-t-2 border-danger flex items-end justify-center">
+<span class="absolute -top-6 text-[10px] font-bold text-danger opacity-0 group-hover:opacity-100">-0.9k</span>
+<span class="absolute bottom-[-24px] text-[8px] uppercase tracking-tighter text-gray-500">KW 16</span>
+</div>
+<div class="relative group w-full h-[85%] bg-danger/20 hover:bg-danger/40 transition-all border-t-2 border-danger flex items-end justify-center">
+<span class="absolute -top-6 text-[10px] font-bold text-danger opacity-0 group-hover:opacity-100">-4.1k</span>
+<span class="absolute bottom-[-24px] text-[8px] uppercase tracking-tighter text-gray-500">KW 17</span>
+</div>
+<div class="relative group w-full h-[55%] bg-danger/20 hover:bg-danger/40 transition-all border-t-2 border-danger flex items-end justify-center">
+<span class="absolute -top-6 text-[10px] font-bold text-danger opacity-0 group-hover:opacity-100">-1.8k</span>
+<span class="absolute bottom-[-24px] text-[8px] uppercase tracking-tighter text-gray-500">KW 18</span>
+</div>
+</div>
+</div>
+<!-- 2. Top 5 Ereignisse -->
+<div class="md:col-span-6 bg-surface p-8 rounded-xl">
+<h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-6">Top 5 Ereignisse mit Kosten-Impact</h2>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-black/20 hover:bg-black/40 transition-colors border-l-2 border-danger">
+<div>
+<p class="text-sm font-bold text-white">Abwasserrohr-Umfahrung</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-widest">Station Nord-West / Baugrube</p>
+</div>
+<p class="text-danger font-bold">- 1.500 €</p>
+</div>
+<div class="flex items-center justify-between p-3 bg-black/20 hover:bg-black/40 transition-colors border-l-2 border-danger">
+<div>
+<p class="text-sm font-bold text-white">Fehllieferung Armierung</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-widest">Logistik-Stopp / Kran 2</p>
+</div>
+<p class="text-danger font-bold">- 840 €</p>
+</div>
+<div class="flex items-center justify-between p-3 bg-black/20 hover:bg-black/40 transition-colors border-l-2 border-warning">
+<div>
+<p class="text-sm font-bold text-white">Überstunden wg. Starkregen</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-widest">Tiefbau / Team Blau</p>
+</div>
+<p class="text-warning font-bold">- 620 €</p>
+</div>
+<div class="flex items-center justify-between p-3 bg-black/20 hover:bg-black/40 transition-colors border-l-2 border-warning">
+<div>
+<p class="text-sm font-bold text-white">Mietgeräte-Standzeit</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-widest">Infrastruktur / Bagger X4</p>
+</div>
+<p class="text-warning font-bold">- 450 €</p>
+</div>
+<div class="flex items-center justify-between p-3 bg-black/20 hover:bg-black/40 transition-colors border-l-2 border-danger">
+<div>
+<p class="text-sm font-bold text-white">Nachbesserung Schalung</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-widest">Hochbau / Wand A3</p>
+</div>
+<p class="text-danger font-bold">- 380 €</p>
+</div>
+</div>
+</div>
+<!-- 3. Gesamt-Produktivität vs. Plankosten -->
+<div class="md:col-span-6 bg-surface p-8 rounded-xl flex flex-col">
+<h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-6">Produktivität vs. Plankosten</h2>
+<div class="flex-1 flex flex-col justify-center space-y-8">
+<div class="relative">
+<div class="flex justify-between mb-2">
+<span class="text-[10px] uppercase font-bold text-gray-500">Gesamt-Output</span>
+<span class="text-[10px] font-bold text-primary">92% EFFIZIENZ</span>
+</div>
+<div class="h-4 bg-black/40 rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 92%"></div>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between mb-2">
+<span class="text-[10px] uppercase font-bold text-gray-500">Plankosten-Limit</span>
+<span class="text-[10px] font-bold text-danger">105% ÜBERSCHRITTEN</span>
+</div>
+<div class="h-4 bg-black/40 rounded-full overflow-hidden flex">
+<div class="h-full bg-danger" style="width: 100%"></div>
+</div>
+<div class="absolute right-0 top-6 text-danger text-[10px] font-bold">+5% Risk</div>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="bg-black/40 p-4 border border-white/5 rounded-lg">
+<p class="text-[10px] text-gray-500 uppercase mb-1">Budget Burn Rate</p>
+<p class="text-xl font-bold text-white">4.200€ / Tag</p>
+</div>
+<div class="bg-black/40 p-4 border border-white/5 rounded-lg">
+<p class="text-[10px] text-gray-500 uppercase mb-1">ROI Prognose</p>
+<p class="text-xl font-bold text-primary">14.2%</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Call to Action Banner -->
+<div class="mt-10 bg-gradient-to-r from-primary/20 to-transparent p-1 rounded-lg">
+<div class="bg-surface p-6 flex flex-col md:flex-row items-center justify-between gap-6 rounded-lg">
+<div class="flex items-center gap-4">
+<div class="bg-primary/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+<div>
+<h3 class="font-bold text-white">KI-Abrechnungs-Assistent bereit</h3>
+<p class="text-sm text-gray-500">3 identifizierte Nachtragspotenziale können jetzt generiert werden.</p>
+</div>
+</div>
+<button class="bg-primary text-black font-bold px-8 py-3 rounded-lg flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all text-xs uppercase tracking-widest whitespace-nowrap">
+                    Jetzt Dokumentieren
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#131313]/90 backdrop-blur-xl border-t border-white/5 flex justify-around items-center h-16 z-50">
+<div class="flex flex-col items-center text-gray-500">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[8px] uppercase mt-1">Dash</span>
+</div>
+<div class="flex flex-col items-center text-gray-500">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[8px] uppercase mt-1">Logs</span>
+</div>
+<div class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="text-[8px] uppercase mt-1 font-bold">Cash</span>
+</div>
+<div class="flex flex-col items-center text-gray-500">
+<span class="material-symbols-outlined">engineering</span>
+<span class="text-[8px] uppercase mt-1">Staff</span>
+</div>
+</nav>
+</body></html>

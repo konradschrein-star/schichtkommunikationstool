@@ -1,0 +1,72 @@
+# Docker Compose für Schichtkommunikationstool - Production
+# Läuft isoliert neben Content Forge
+#
+# Services:
+# - PostgreSQL 16: Auf Port 5433 (statt 5432, um Konflikt zu vermeiden)
+# - Whisper Service: Auf Port 8005 (FastAPI + faster-whisper)
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   docker compose -f docker-compose.prod.yml down
+#   docker compose -f docker-compose.prod.yml logs -f
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: schichtkommunikationstool-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: schichtkommunikationstool
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-schichtkommunikations_secure_pw_2026}
+    ports:
+      - "5433:5432"  # External 5433, Internal 5432
+    volumes:
+      - schichtkommunikationstool-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d schichtkommunikationstool"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    # Resource limits: Niedrige Priorität vs Content Forge
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  whisper-service:
+    build:
+      context: ./whisper-service
+      dockerfile: Dockerfile
+    container_name: schichtkommunikationstool-whisper
+    restart: unless-stopped
+    ports:
+      - "8005:8000"  # External 8005, Internal 8000
+    environment:
+      - MODEL_SIZE=medium
+      - DEVICE=cpu
+      - COMPUTE_TYPE=int8
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    # Resource limits: Whisper ist CPU-intensiv, aber niedrige Priorität
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+volumes:
+  schichtkommunikationstool-pgdata:
+    name: schichtkommunikationstool-pgdata

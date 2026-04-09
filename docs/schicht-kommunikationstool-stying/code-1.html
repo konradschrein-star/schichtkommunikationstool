@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GLEISBAU_CORE | Performance Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#002e6a",
+                    "on-secondary-container": "#e6ecff",
+                    "primary-fixed": "#e9ddff",
+                    "on-surface": "#e5e2e3",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface-container": "#201f20",
+                    "inverse-primary": "#6d3bd7",
+                    "primary-container": "#a078ff",
+                    "surface-container-highest": "#353436",
+                    "error": "#ffb4ab",
+                    "background": "#131314",
+                    "tertiary-fixed": "#72ff73",
+                    "tertiary-container": "#00a82a",
+                    "inverse-surface": "#e5e2e3",
+                    "surface-container-lowest": "#0e0e0f",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#313031",
+                    "surface-container-high": "#2a2a2b",
+                    "surface-dim": "#131314",
+                    "on-primary-fixed": "#23005c",
+                    "on-tertiary-fixed": "#002203",
+                    "outline": "#958ea0",
+                    "on-tertiary": "#003908",
+                    "tertiary": "#2ae446",
+                    "on-tertiary-container": "#003206",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-tint": "#d0bcff",
+                    "secondary-container": "#0566d9",
+                    "on-tertiary-fixed-variant": "#005310",
+                    "on-error": "#690005",
+                    "on-secondary-fixed": "#001a42",
+                    "primary-fixed-dim": "#d0bcff",
+                    "surface-variant": "#353436",
+                    "surface-container-low": "#1c1b1c",
+                    "on-primary-container": "#340080",
+                    "secondary": "#adc6ff",
+                    "primary": "#d0bcff",
+                    "tertiary-fixed-dim": "#2ae446",
+                    "on-background": "#e5e2e3",
+                    "on-surface-variant": "#cbc3d7",
+                    "on-primary-fixed-variant": "#5516be",
+                    "on-primary": "#3c0091",
+                    "outline-variant": "#494454",
+                    "surface-bright": "#3a393a",
+                    "surface": "#131314",
+                    "error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-shift-glassmorphism {
+            background: rgba(19, 19, 20, 0.4);
+            backdrop-filter: blur(20px);
+        }
+        .glass-panel {
+            background: rgba(53, 52, 54, 0.4);
+            backdrop-filter: blur(20px);
+        }
+        .radar-grid {
+            background-image: radial-gradient(circle, rgba(208, 188, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 w-full h-16 border-b border-white/10 bg-[#131314]/40 backdrop-blur-xl shadow-[0_0_20px_rgba(139,92,246,0.1)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-widest text-violet-500 uppercase font-headline">GLEISBAU_CORE</span>
+<nav class="hidden md:flex gap-6">
+<a class="font-['Space_Grotesk'] tracking-tighter uppercase text-xs text-zinc-500 hover:bg-white/5 transition-all cursor-pointer active:scale-95 duration-200" href="#">LIVE_FEED</a>
+<a class="font-['Space_Grotesk'] tracking-tighter uppercase text-xs text-violet-400 border-b-2 border-violet-500 pb-1 hover:bg-white/5 transition-all cursor-pointer active:scale-95 duration-200" href="#">REPORTS</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-400 cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-zinc-400 cursor-pointer hover:text-primary transition-colors">download</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/30">
+<img class="w-full h-full object-cover" data-alt="close up professional portrait of a senior engineering executive in a dark tech environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbPr-FZBUqPgSV5aBaUXk7kUolHEXo1EdPAJv1gmR1uF13KBaXw6Nn1E4DumFwzwzvW4LifqqOWknNiksbQgyl_4_5WUjVF9BU8Yzuo2EV-r0Q6O_Mfwmbtkhi9pgMBme2BxjErCO25E-qWTH-ps7O1abS7tgTlygKrBlmeuPrVWEbEftQbiD-DBO-fkVs__CBuWzDzu_Zi6GaOUh00AraYSS7qKjt-9VS6-j2SCwu708IOrAUXy9PqvpJ5AVblqOmARY32d7eVOb1"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col pt-20 pb-6 h-screen w-64 border-r border-white/5 bg-[#131314] z-40 hidden md:flex">
+<div class="px-6 mb-8">
+<h2 class="font-headline text-xs font-bold tracking-widest text-primary/60 uppercase">OPERATIONS_CMD</h2>
+<p class="text-[10px] text-zinc-500 font-mono">V.2.4.9_SECURE</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 font-['Space_Grotesk'] text-sm tracking-tight text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 font-['Space_Grotesk'] text-sm tracking-tight bg-violet-500/10 text-violet-400 border-l-4 border-violet-600 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">groups</span> Mitarbeiter-KPIs
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 font-['Space_Grotesk'] text-sm tracking-tight text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">payments</span> Finanz-Impact
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 font-['Space_Grotesk'] text-sm tracking-tight text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span> Einstellungen
+            </a>
+</nav>
+<div class="px-3 space-y-1 border-t border-white/5 pt-4">
+<a class="flex items-center gap-3 px-3 py-2 font-['Space_Grotesk'] text-sm tracking-tight text-zinc-500 hover:text-zinc-200 transition-colors" href="#">
+<span class="material-symbols-outlined">help_center</span> Support
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 font-['Space_Grotesk'] text-sm tracking-tight text-zinc-500 hover:text-zinc-200 transition-colors" href="#">
+<span class="material-symbols-outlined">terminal</span> Logs
+            </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="md:ml-64 pt-24 px-6 pb-12">
+<!-- Hero Section: Team DNA Radar -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+<div class="lg:col-span-8 glass-panel p-8 rounded-xl border border-white/5 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[120px] text-primary">analytics</span>
+</div>
+<div class="relative z-10">
+<h1 class="font-headline text-4xl font-extrabold tracking-tighter mb-2 text-primary">TEAM_DNA_ANALYTICS</h1>
+<p class="text-zinc-500 font-headline text-sm uppercase tracking-[0.2em] mb-8">Performance Aggregation: Q3 Cycle</p>
+<div class="flex flex-col md:flex-row items-center gap-12">
+<!-- Simulated Radar Chart -->
+<div class="relative w-64 h-64 flex items-center justify-center radar-grid rounded-full border border-primary/10">
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-full h-[1px] bg-white/5 rotate-0"></div>
+<div class="w-full h-[1px] bg-white/5 rotate-45"></div>
+<div class="w-full h-[1px] bg-white/5 rotate-90"></div>
+<div class="w-full h-[1px] bg-white/5 rotate-135"></div>
+</div>
+<!-- Data Polygon -->
+<svg class="absolute inset-0 w-full h-full drop-shadow-[0_0_10px_rgba(208,188,255,0.4)]" viewbox="0 0 100 100">
+<polygon fill="rgba(208, 188, 255, 0.2)" points="50,15 80,40 70,80 30,80 20,40" stroke="#d0bcff" stroke-width="1.5"></polygon>
+<circle cx="50" cy="15" fill="#d0bcff" r="2"></circle>
+<circle cx="80" cy="40" fill="#d0bcff" r="2"></circle>
+<circle cx="70" cy="80" fill="#d0bcff" r="2"></circle>
+<circle cx="30" cy="80" fill="#d0bcff" r="2"></circle>
+<circle cx="20" cy="40" fill="#d0bcff" r="2"></circle>
+</svg>
+<!-- Labels -->
+<div class="absolute -top-6 font-headline text-[10px] tracking-widest text-primary">PRÄZISION</div>
+<div class="absolute -right-12 font-headline text-[10px] tracking-widest text-zinc-500 uppercase">Speed</div>
+<div class="absolute -bottom-6 font-headline text-[10px] tracking-widest text-zinc-500 uppercase">Doku-Quality</div>
+<div class="absolute -left-12 font-headline text-[10px] tracking-widest text-tertiary">Safety</div>
+</div>
+<div class="flex-1 space-y-6">
+<div class="p-4 bg-surface-container-lowest rounded border-l-2 border-tertiary">
+<p class="text-zinc-500 text-xs font-headline uppercase mb-1">Primärer Fokus</p>
+<h3 class="font-headline text-xl text-tertiary font-bold uppercase tracking-tight">Safety Compliance 98.4%</h3>
+<p class="text-xs text-on-surface-variant mt-2 leading-relaxed">Exzellente Sicherheitsstandards im Team. Null-Inzidenz-Rate in den letzten 400 Schichten erreicht.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-4 rounded">
+<p class="text-zinc-500 text-[10px] font-headline uppercase">Durchschnitt</p>
+<div class="text-2xl font-headline font-bold text-on-surface">84.2</div>
+</div>
+<div class="bg-surface-container p-4 rounded">
+<p class="text-zinc-500 text-[10px] font-headline uppercase">Trend</p>
+<div class="text-2xl font-headline font-bold text-tertiary">+12.4%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Bento: Badge System -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-high p-6 rounded-xl border border-white/5 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline text-sm font-bold tracking-widest text-on-surface-variant uppercase mb-4">Top Dokumentierer</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center border border-tertiary/40">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<div>
+<p class="text-sm font-bold">Piotr Kowalski</p>
+<p class="text-xs text-zinc-500">Gold Badge: Präzisionslogistik</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/40">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div>
+<p class="text-sm font-bold">Hans Schmidt</p>
+<p class="text-xs text-zinc-500">Silver Badge: Voice Log Clarity</p>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-6 w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary font-headline text-xs tracking-widest uppercase transition-all rounded-lg border border-primary/20">Alle Badges Ansehen</button>
+</div>
+</div>
+</div>
+<!-- Worker Grid -->
+<div class="mb-12">
+<div class="flex items-end justify-between mb-8">
+<div>
+<h2 class="font-headline text-2xl font-bold tracking-tighter uppercase">Individuelle Performance</h2>
+<p class="text-zinc-500 text-sm">Echtzeit-Analyse basierend auf Voice-Logs &amp; Telemetrie</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container text-xs font-headline uppercase tracking-widest hover:bg-surface-container-high transition-colors">Sortieren: KPI</button>
+<button class="px-4 py-2 bg-surface-container text-xs font-headline uppercase tracking-widest hover:bg-surface-container-high transition-colors">Filter</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Worker Card 1 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-300 group">
+<div class="p-6">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-14 h-14 rounded object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="portrait of a rugged industrial construction worker with grit and focus in dark lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA39kSEkDR92HFgvqN8v41EG8bLveUXNMx3IBU20IiupcU4rYYIdgiHLK4QI3YIM4IWSkzHv6M3IlCuQmvthVM4AkSMzgYxINSVnCUTlZTFtN8r4dQ6wQZOh5B6Ryy2Nrh44CRWUZkYDuGXOkbHJLGJj7a5QO6lAo6_qugNkNsOvwq8VUfPks1v3yQR9ReUe6fdb70YHWiplfkAEbOWRWonO0YyIqtOdqPq5fI2xphnv2__BQ15RskMtpnMH-THEpEr0fb0G1iVhSuK"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-tertiary border-2 border-surface-container-low"></div>
+</div>
+<div>
+<h4 class="font-headline text-lg font-bold">Piotr Kowalski</h4>
+<p class="text-[10px] font-mono text-zinc-500">ID: GK-8829-X</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-2xl font-headline font-bold text-tertiary">96.8</div>
+<div class="text-[10px] text-zinc-500 uppercase font-headline">Score</div>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Mood Tracking -->
+<div class="bg-surface-container-lowest p-3 rounded">
+<div class="flex justify-between text-[10px] font-headline uppercase text-zinc-500 mb-2">
+<span>AI Voice Mood Analysis</span>
+<span class="text-primary">Stark fokussiert</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 85%"></div>
+</div>
+</div>
+<!-- Individual Metrics -->
+<div class="grid grid-cols-2 gap-3">
+<div class="p-2 bg-surface-container rounded border-l border-white/5">
+<p class="text-[9px] text-zinc-500 uppercase font-headline">Präzision</p>
+<p class="text-sm font-bold">98%</p>
+</div>
+<div class="p-2 bg-surface-container rounded border-l border-white/5">
+<p class="text-[9px] text-zinc-500 uppercase font-headline">Doku-Qualität</p>
+<p class="text-sm font-bold">92%</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-3 bg-surface-container-high border-t border-white/5 flex justify-between items-center">
+<span class="text-[10px] font-headline text-zinc-400 uppercase tracking-tighter">Status: Aktiv am Gleis 4</span>
+<span class="material-symbols-outlined text-sm text-primary">arrow_forward</span>
+</div>
+</div>
+<!-- Worker Card 2 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-300 group">
+<div class="p-6">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-14 h-14 rounded object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="industrial worker profile picture with safety gear in high contrast dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzED9duxLIB-JAq6DG-7gfBGiX6VMmIUNcTtXWDsYMkcZCjIr_pd7DTDUCA6qjBGHY2FIO_NqUphPVU5OOJCc3DKyPYTE9t-TgkgInv5TRu1STdM4z3AEdq72dtLtS6diJkKckJZE-qz3sDlh9JVyiINzPcA8Bl0lpdbiQO_-3gXyFAWanZWsLO5A0WEhDc4rZl-L5iQlNnYrKtkW4JEKb-9VW85srSdOefhWP8OBRhVfbvbc1GAV-El9tQAekpuJOVgXLyz2LIQOQ"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-yellow-500 border-2 border-surface-container-low"></div>
+</div>
+<div>
+<h4 class="font-headline text-lg font-bold">Hans Schmidt</h4>
+<p class="text-[10px] font-mono text-zinc-500">ID: GK-1102-Y</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-2xl font-headline font-bold text-on-surface">82.4</div>
+<div class="text-[10px] text-zinc-500 uppercase font-headline">Score</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-3 rounded">
+<div class="flex justify-between text-[10px] font-headline uppercase text-zinc-500 mb-2">
+<span>AI Voice Mood Analysis</span>
+<span class="text-secondary">Ermüdung erkannt</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 45%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="p-2 bg-surface-container rounded border-l border-white/5">
+<p class="text-[9px] text-zinc-500 uppercase font-headline">Präzision</p>
+<p class="text-sm font-bold">81%</p>
+</div>
+<div class="p-2 bg-surface-container rounded border-l border-white/5">
+<p class="text-[9px] text-zinc-500 uppercase font-headline">Doku-Qualität</p>
+<p class="text-sm font-bold">99%</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-3 bg-surface-container-high border-t border-white/5 flex justify-between items-center">
+<span class="text-[10px] font-headline text-zinc-400 uppercase tracking-tighter">Status: Pausiert</span>
+<span class="material-symbols-outlined text-sm text-primary">arrow_forward</span>
+</div>
+</div>
+<!-- Worker Card 3 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-300 group">
+<div class="p-6">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-14 h-14 rounded object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="professional industrial worker in tech environment looking confident in soft focus background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXGyj3LGQxTrrvjasmR3xxy43dFUB01izOogMoGzVHnCDoxs2-iXAie-i-7LjDsdqybc0Dpo-968YAW5waiCHVoyb2YsStxjuwF6lIMbHcqQ_Xfg4NovWHm7ktzirIajDowAFCFKbOeoi8gLGCKaMC4pM8dGERblL7-slSImmBX0HzneV-6fbAPHYXg-9bAoM-GhUBhNY14hkNJqnTrP4OPeuAOgJxVRd0gjqR6dqdwvPUcqxNuNvOKspiN5vzOSAkcXXz8Z9yYzk6"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-tertiary border-2 border-surface-container-low"></div>
+</div>
+<div>
+<h4 class="font-headline text-lg font-bold">Lukas Weber</h4>
+<p class="text-[10px] font-mono text-zinc-500">ID: GK-4431-Z</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-2xl font-headline font-bold text-tertiary">94.1</div>
+<div class="text-[10px] text-zinc-500 uppercase font-headline">Score</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-3 rounded">
+<div class="flex justify-between text-[10px] font-headline uppercase text-zinc-500 mb-2">
+<span>AI Voice Mood Analysis</span>
+<span class="text-primary">Optimale Leistung</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 92%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="p-2 bg-surface-container rounded border-l border-white/5">
+<p class="text-[9px] text-zinc-500 uppercase font-headline">Präzision</p>
+<p class="text-sm font-bold">95%</p>
+</div>
+<div class="p-2 bg-surface-container rounded border-l border-white/5">
+<p class="text-[9px] text-zinc-500 uppercase font-headline">Doku-Qualität</p>
+<p class="text-sm font-bold">88%</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-3 bg-surface-container-high border-t border-white/5 flex justify-between items-center">
+<span class="text-[10px] font-headline text-zinc-400 uppercase tracking-tighter">Status: Aktiv am Gleis 12</span>
+<span class="material-symbols-outlined text-sm text-primary">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Comparison Chart Section -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-white/5">
+<h3 class="font-headline text-xl font-bold mb-8 uppercase tracking-widest text-on-surface-variant">Performance vs. Company Benchmark</h3>
+<div class="flex flex-col gap-6">
+<!-- Bar Comparison Row 1 -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-xs font-headline uppercase">
+<span class="text-zinc-400">Piotr Kowalski</span>
+<span class="text-primary">96.8%</span>
+</div>
+<div class="h-4 w-full bg-white/5 rounded relative">
+<div class="absolute left-0 top-0 h-full bg-primary/40 rounded shadow-[0_0_15px_rgba(208,188,255,0.3)]" style="width: 96.8%"></div>
+<!-- Company Average Marker -->
+<div class="absolute top-0 h-full w-[2px] bg-tertiary shadow-[0_0_8px_#2ae446]" style="left: 78%">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] text-tertiary whitespace-nowrap">COMPANY AVG</div>
+</div>
+</div>
+</div>
+<!-- Bar Comparison Row 2 -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-xs font-headline uppercase">
+<span class="text-zinc-400">Team West-Sektor</span>
+<span class="text-primary">82.1%</span>
+</div>
+<div class="h-4 w-full bg-white/5 rounded relative">
+<div class="absolute left-0 top-0 h-full bg-primary/40 rounded" style="width: 82.1%"></div>
+<div class="absolute top-0 h-full w-[2px] bg-tertiary shadow-[0_0_8px_#2ae446]" style="left: 78%"></div>
+</div>
+</div>
+<!-- Bar Comparison Row 3 -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-xs font-headline uppercase">
+<span class="text-zinc-400">Benchmark Präzision</span>
+<span class="text-primary">91.5%</span>
+</div>
+<div class="h-4 w-full bg-white/5 rounded relative">
+<div class="absolute left-0 top-0 h-full bg-primary/40 rounded" style="width: 91.5%"></div>
+<div class="absolute top-0 h-full w-[2px] bg-tertiary shadow-[0_0_8px_#2ae446]" style="left: 78%"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB (Suppressed on this analytics-heavy detail page per rule, but if needed, would be here) -->
+<!-- Suppressed: The FAB's primary actions are transactional/creative, not analytical -->
+<!-- Mobile BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-[#131314]/80 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 z-50">
+<a class="flex flex-col items-center gap-1 text-zinc-500" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-headline uppercase">Overview</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="text-[10px] font-headline uppercase">KPIs</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-zinc-500" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-headline uppercase">Impact</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-zinc-500" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-headline uppercase">Set</span>
+</a>
+</nav>
+</body></html>

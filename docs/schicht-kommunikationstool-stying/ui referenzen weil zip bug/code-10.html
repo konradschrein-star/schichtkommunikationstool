@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Intel | Executive Command</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0e0e0e;
+            background-image: radial-gradient(circle at 50% 0%, rgba(204, 151, 255, 0.05) 0%, transparent 50%);
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 9999;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffb2b9",
+                        "on-primary-container": "#360061",
+                        "tertiary-container": "#34b5fa",
+                        "on-secondary-container": "#f7f7ff",
+                        "surface-variant": "#262626",
+                        "on-tertiary-fixed": "#001a29",
+                        "tertiary-dim": "#17a8ec",
+                        "on-error": "#490013",
+                        "on-secondary-fixed": "#003271",
+                        "primary": "#cc97ff",
+                        "error-dim": "#d73357",
+                        "background": "#0e0e0e",
+                        "on-surface-variant": "#ababab",
+                        "secondary": "#699cff",
+                        "on-tertiary-fixed-variant": "#003d5a",
+                        "surface-container-low": "#131313",
+                        "on-secondary": "#001e4a",
+                        "surface": "#0e0e0e",
+                        "outline-variant": "#484848",
+                        "on-primary": "#47007c",
+                        "secondary-fixed": "#bfd1ff",
+                        "tertiary-fixed-dim": "#25adf1",
+                        "inverse-primary": "#842cd3",
+                        "surface-container": "#191919",
+                        "on-secondary-fixed-variant": "#004da8",
+                        "error": "#ff6e84",
+                        "secondary-dim": "#699cff",
+                        "secondary-container": "#005ac2",
+                        "on-tertiary": "#003b56",
+                        "on-tertiary-container": "#003047",
+                        "surface-container-high": "#1f1f1f",
+                        "surface-dim": "#0e0e0e",
+                        "on-background": "#ffffff",
+                        "inverse-on-surface": "#555555",
+                        "primary-fixed-dim": "#b971ff",
+                        "tertiary-fixed": "#40bbff",
+                        "on-surface": "#ffffff",
+                        "surface-tint": "#cc97ff",
+                        "primary-dim": "#9c48ea",
+                        "primary-container": "#c284ff",
+                        "on-primary-fixed": "#000000",
+                        "primary-fixed": "#c284ff",
+                        "tertiary": "#61c2ff",
+                        "error-container": "#a70138",
+                        "surface-bright": "#2c2c2c",
+                        "surface-container-highest": "#262626",
+                        "outline": "#757575",
+                        "inverse-surface": "#f9f9f9",
+                        "on-primary-fixed-variant": "#430076",
+                        "secondary-fixed-dim": "#a9c4ff",
+                        "surface-container-lowest": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-surface overflow-x-hidden pb-24">
+<div class="noise-overlay"></div>
+<!-- Mobile Top Header -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 glass-panel flex items-center justify-between px-6 border-b border-outline-variant/10 bg-[#0e0e0e]/70">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+<h1 class="font-headline font-bold text-lg tracking-tighter uppercase text-primary">Kinetic Intel</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary">notifications</span>
+<div class="w-8 h-8 rounded-full border border-primary/20 p-0.5">
+<img alt="CEO" class="w-full h-full rounded-full object-cover" data-alt="professional executive portrait of a CEO in a dark minimalist setting with subtle rim lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4nHp_kI6icyZpL5uAbJXM8oZIghODPyl4bbv6pKDzMGLsIy7r-JQqPpUSswyrXbKe7y7Jrkrxm1spwE06n0Fhsww81QfdI2bD1EcJWZpULDvFawSbBkRWjVxmvOgUgH5US-TQ-mU8yuRFSISeMU2HfdcjYEMpcrAy8MBLrt1Co_c0bTKAtubfLF35dqEkphZ8Pf0xRkGQSFbNgq1xie9b0Pk0Tydm2WvFfH0-FGhp22fi2Hh_f6OZlSno58tdE70RZ6SBK9fl6eSK"/>
+</div>
+</div>
+</header>
+<main class="mt-20 px-4 space-y-6">
+<!-- Hero Section: KPI Cards -->
+<section class="space-y-4">
+<div class="flex justify-between items-end mb-2">
+<h2 class="font-headline text-sm font-semibold text-on-surface-variant tracking-widest uppercase">Global Performance</h2>
+<span class="font-label text-[10px] text-tertiary px-2 py-0.5 bg-tertiary/10 rounded-sm">Live Feed</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- KPI 1 -->
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-primary shadow-[10px_10px_20px_-10px_rgba(204,151,255,0.1)]">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Total Revenue</p>
+<h3 class="font-headline text-3xl font-bold text-on-surface tracking-tighter">$4.2M</h3>
+</div>
+<div class="text-right">
+<span class="font-label text-xs text-tertiary flex items-center gap-1">+12.4% <span class="material-symbols-outlined text-xs">trending_up</span></span>
+<div class="h-8 w-24 mt-2">
+<!-- Mini Sparkline Placeholder -->
+<div class="w-full h-full bg-gradient-to-t from-primary/0 to-primary/20 clip-path-sparkline flex items-end gap-1">
+<div class="w-full h-[40%] bg-primary/40 rounded-t-sm"></div>
+<div class="w-full h-[60%] bg-primary/40 rounded-t-sm"></div>
+<div class="w-full h-[55%] bg-primary/40 rounded-t-sm"></div>
+<div class="w-full h-[80%] bg-primary/60 rounded-t-sm"></div>
+<div class="w-full h-[100%] bg-primary rounded-t-sm shadow-[0_0_10px_rgba(204,151,255,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-secondary shadow-[10px_10px_20px_-10px_rgba(105,156,255,0.1)]">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Active Projects</p>
+<h3 class="font-headline text-3xl font-bold text-on-surface tracking-tighter">842</h3>
+</div>
+<div class="text-right">
+<span class="font-label text-xs text-error-dim flex items-center gap-1">-2.1% <span class="material-symbols-outlined text-xs">trending_down</span></span>
+<div class="h-8 w-24 mt-2">
+<div class="w-full h-full bg-gradient-to-t from-secondary/0 to-secondary/20 flex items-end gap-1">
+<div class="w-full h-[90%] bg-secondary/40 rounded-t-sm"></div>
+<div class="w-full h-[70%] bg-secondary/40 rounded-t-sm"></div>
+<div class="w-full h-[85%] bg-secondary/40 rounded-t-sm"></div>
+<div class="w-full h-[60%] bg-secondary/60 rounded-t-sm"></div>
+<div class="w-full h-[40%] bg-secondary rounded-t-sm shadow-[0_0_10px_rgba(105,156,255,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-tertiary shadow-[10px_10px_20px_-10px_rgba(97,194,255,0.1)]">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Customer NPS</p>
+<h3 class="font-headline text-3xl font-bold text-on-surface tracking-tighter">78.2</h3>
+</div>
+<div class="text-right">
+<span class="font-label text-xs text-tertiary flex items-center gap-1">+5.8% <span class="material-symbols-outlined text-xs">trending_up</span></span>
+<div class="h-8 w-24 mt-2">
+<div class="w-full h-full bg-gradient-to-t from-tertiary/0 to-tertiary/20 flex items-end gap-1">
+<div class="w-full h-[30%] bg-tertiary/40 rounded-t-sm"></div>
+<div class="w-full h-[50%] bg-tertiary/40 rounded-t-sm"></div>
+<div class="w-full h-[70%] bg-tertiary/40 rounded-t-sm"></div>
+<div class="w-full h-[65%] bg-tertiary/60 rounded-t-sm"></div>
+<div class="w-full h-[90%] bg-tertiary rounded-t-sm shadow-[0_0_10px_rgba(97,194,255,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Charts Area -->
+<section class="space-y-6">
+<div class="flex justify-between items-center">
+<h2 class="font-headline text-sm font-semibold text-on-surface-variant tracking-widest uppercase">Intel Insights</h2>
+<div class="flex gap-2">
+<button class="bg-surface-container-high p-1.5 rounded-sm"><span class="material-symbols-outlined text-sm">filter_list</span></button>
+<button class="bg-surface-container-high p-1.5 rounded-sm"><span class="material-symbols-outlined text-sm text-secondary">share</span></button>
+</div>
+</div>
+<!-- 3D Area Chart Visualization (Simulated) -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10">
+<div class="p-4 border-b border-outline-variant/10 flex justify-between items-center">
+<span class="font-label text-[10px] font-bold text-secondary uppercase tracking-widest">Market Saturation</span>
+<span class="text-[10px] text-on-surface-variant font-label">T-Minus 24h</span>
+</div>
+<div class="h-48 relative p-4 flex items-end justify-between gap-1 overflow-hidden">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between p-4 opacity-5 pointer-events-none">
+<div class="w-full h-[1px] bg-white"></div>
+<div class="w-full h-[1px] bg-white"></div>
+<div class="w-full h-[1px] bg-white"></div>
+</div>
+<!-- Data Bars (Stacked/3D Styled) -->
+<div class="relative w-full h-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<defs>
+<lineargradient id="areaGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#cc97ff" stop-opacity="0.5"></stop>
+<stop offset="100%" stop-color="#cc97ff" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0 80 Q 20 40 40 60 T 60 20 T 80 50 T 100 30 L 100 100 L 0 100 Z" fill="url(#areaGrad)"></path>
+<path d="M0 80 Q 20 40 40 60 T 60 20 T 80 50 T 100 30" fill="none" stroke="#cc97ff" stroke-width="0.5"></path>
+</svg>
+<!-- Data Node -->
+<div class="absolute top-[20%] left-[60%] w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_#cc97ff] border-2 border-[#0e0e0e]"></div>
+</div>
+</div>
+</div>
+<!-- Heatmap Visualization -->
+<div class="bg-surface-container-low rounded-2xl p-4 border border-outline-variant/10">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label text-[10px] font-bold text-primary uppercase tracking-widest">Team Velocity Heatmap</span>
+<span class="text-[10px] text-on-surface-variant font-label">Regional Nodes</span>
+</div>
+<div class="grid grid-cols-7 gap-1">
+<!-- Heatmap Rows -->
+<div class="h-8 bg-primary/10 rounded-sm"></div>
+<div class="h-8 bg-primary/30 rounded-sm"></div>
+<div class="h-8 bg-primary/20 rounded-sm"></div>
+<div class="h-8 bg-primary/50 rounded-sm"></div>
+<div class="h-8 bg-primary/80 rounded-sm shadow-[0_0_10px_rgba(204,151,255,0.3)]"></div>
+<div class="h-8 bg-primary/40 rounded-sm"></div>
+<div class="h-8 bg-primary/20 rounded-sm"></div>
+<div class="h-8 bg-primary/20 rounded-sm"></div>
+<div class="h-8 bg-primary/10 rounded-sm"></div>
+<div class="h-8 bg-primary/60 rounded-sm"></div>
+<div class="h-8 bg-primary/90 rounded-sm shadow-[0_0_10px_rgba(204,151,255,0.4)]"></div>
+<div class="h-8 bg-primary/50 rounded-sm"></div>
+<div class="h-8 bg-primary/30 rounded-sm"></div>
+<div class="h-8 bg-primary/10 rounded-sm"></div>
+<div class="h-8 bg-primary/50 rounded-sm"></div>
+<div class="h-8 bg-primary/80 rounded-sm shadow-[0_0_10px_rgba(204,151,255,0.3)]"></div>
+<div class="h-8 bg-primary/20 rounded-sm"></div>
+<div class="h-8 bg-primary/10 rounded-sm"></div>
+<div class="h-8 bg-primary/40 rounded-sm"></div>
+<div class="h-8 bg-primary/70 rounded-sm"></div>
+<div class="h-8 bg-primary/95 rounded-sm shadow-[0_0_15px_rgba(204,151,255,0.5)]"></div>
+</div>
+</div>
+</section>
+<!-- Ranking Section: Leaderboard -->
+<section class="space-y-4">
+<h2 class="font-headline text-sm font-semibold text-on-surface-variant tracking-widest uppercase">Personnel Tiers</h2>
+<div class="bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10">
+<!-- Top Performers -->
+<div class="p-4 bg-secondary/5 border-b border-outline-variant/10">
+<span class="font-label text-[10px] font-bold text-secondary uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                        Top Performer
+                    </span>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant/20 flex items-center justify-center text-secondary font-headline font-bold">1</div>
+<div>
+<p class="font-body text-sm font-bold">M. Schmidt</p>
+<p class="font-label text-[10px] text-on-surface-variant">Berlin Hub</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-sm font-bold text-secondary">98.2%</p>
+<p class="font-label text-[10px] text-tertiary">Peak Eff.</p>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant/20 flex items-center justify-center text-on-surface-variant font-headline font-bold">2</div>
+<div>
+<p class="font-body text-sm font-bold">A. Volkov</p>
+<p class="font-label text-[10px] text-on-surface-variant">Zurich Operations</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-sm font-bold text-secondary">95.4%</p>
+<p class="font-label text-[10px] text-tertiary">Optimal</p>
+</div>
+</div>
+</div>
+<!-- Nachzügler (Underperformers) -->
+<div class="p-4 bg-error-dim/5 border-t border-b border-outline-variant/10">
+<span class="font-label text-[10px] font-bold text-error-dim uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">warning</span>
+                        Nachzügler
+                    </span>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<div class="p-4 flex items-center justify-between bg-error-dim/5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container-high border border-error-dim/20 flex items-center justify-center text-error-dim font-headline font-bold">24</div>
+<div>
+<p class="font-body text-sm font-bold">K. Jensen</p>
+<p class="font-label text-[10px] text-on-surface-variant">Nordic Sales</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-sm font-bold text-error-dim">42.1%</p>
+<p class="font-label text-[10px] text-error-dim/70">Critical</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#0e0e0e]/90 backdrop-blur-2xl rounded-t-2xl border-t border-[#484848]/20 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<!-- Item 1: Active -->
+<a class="flex flex-col items-center justify-center text-[#cc97ff] bg-[#cc97ff]/10 rounded-xl py-1 px-3 scale-110 duration-200 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] text-[10px] font-bold">Home</span>
+</a>
+<!-- Item 2 -->
+<a class="flex flex-col items-center justify-center text-slate-500 hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">person_search</span>
+<span class="font-['Inter'] text-[10px] font-bold">Staff</span>
+</a>
+<!-- Item 3 -->
+<a class="flex flex-col items-center justify-center text-slate-500 hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">query_stats</span>
+<span class="font-['Inter'] text-[10px] font-bold">Finance</span>
+</a>
+<!-- Item 4 -->
+<a class="flex flex-col items-center justify-center text-slate-500 hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">tune</span>
+<span class="font-['Inter'] text-[10px] font-bold">Settings</span>
+</a>
+</nav>
+<!-- Floating Action Button: Suppressed for Dashboard focus as per mandates, but included as a "Command" button if needed for specific task screens. Here we keep layout clean. -->
+</body></html>

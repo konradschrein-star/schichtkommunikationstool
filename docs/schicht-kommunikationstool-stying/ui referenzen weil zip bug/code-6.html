@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GLEISBAU_CORE | Financial Impact</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#002e6a",
+                        "on-secondary-container": "#e6ecff",
+                        "primary-fixed": "#e9ddff",
+                        "on-surface": "#e5e2e3",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-container": "#201f20",
+                        "inverse-primary": "#6d3bd7",
+                        "primary-container": "#a078ff",
+                        "surface-container-highest": "#353436",
+                        "error": "#ffb4ab",
+                        "background": "#131314",
+                        "tertiary-fixed": "#72ff73",
+                        "tertiary-container": "#00a82a",
+                        "inverse-surface": "#e5e2e3",
+                        "surface-container-lowest": "#0e0e0f",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "inverse-on-surface": "#313031",
+                        "surface-container-high": "#2a2a2b",
+                        "surface-dim": "#131314",
+                        "on-primary-fixed": "#23005c",
+                        "on-tertiary-fixed": "#002203",
+                        "outline": "#958ea0",
+                        "on-tertiary": "#003908",
+                        "tertiary": "#2ae446",
+                        "on-tertiary-container": "#003206",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-tint": "#d0bcff",
+                        "secondary-container": "#0566d9",
+                        "on-tertiary-fixed-variant": "#005310",
+                        "on-error": "#690005",
+                        "on-secondary-fixed": "#001a42",
+                        "primary-fixed-dim": "#d0bcff",
+                        "surface-variant": "#353436",
+                        "surface-container-low": "#1c1b1c",
+                        "on-primary-container": "#340080",
+                        "secondary": "#adc6ff",
+                        "primary": "#d0bcff",
+                        "tertiary-fixed-dim": "#2ae446",
+                        "on-background": "#e5e2e3",
+                        "on-surface-variant": "#cbc3d7",
+                        "on-primary-fixed-variant": "#5516be",
+                        "on-primary": "#3c0091",
+                        "outline-variant": "#494454",
+                        "surface-bright": "#3a393a",
+                        "surface": "#131314",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #131314; color: #e5e2e3; }
+        .glass-card {
+            background: rgba(53, 52, 54, 0.4);
+            backdrop-filter: blur(20px);
+        }
+        .waterfall-bar-up { background-color: #2ae446; }
+        .waterfall-bar-down { background-color: #ffb4ab; }
+        .waterfall-bar-neutral { background-color: #d0bcff; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 bg-[#131314]/40 backdrop-blur-xl w-full h-16 border-b border-white/10 shadow-[0_0_20px_rgba(139,92,246,0.1)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-widest text-violet-500 uppercase font-headline">GLEISBAU_CORE</span>
+<nav class="hidden md:flex gap-6">
+<a class="font-['Space_Grotesk'] tracking-tighter uppercase text-xs text-zinc-500 hover:bg-white/5 transition-all cursor-pointer active:scale-95 duration-200" href="#">LIVE_FEED</a>
+<a class="font-['Space_Grotesk'] tracking-tighter uppercase text-xs text-zinc-500 hover:bg-white/5 transition-all cursor-pointer active:scale-95 duration-200" href="#">REPORTS</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative flex items-center bg-surface-container-lowest px-3 py-1 rounded-lg">
+<span class="material-symbols-outlined text-zinc-500 text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs font-label uppercase tracking-widest w-48" placeholder="CMD SEARCH..." type="text"/>
+</div>
+<span class="material-symbols-outlined text-zinc-400 cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-zinc-400 cursor-pointer hover:text-primary transition-colors">download</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">account_circle</span>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col pt-20 pb-6 bg-[#131314] h-screen w-64 border-r border-white/5 font-['Space_Grotesk'] text-sm tracking-tight z-40">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div>
+<div class="text-xs font-bold text-on-surface uppercase tracking-tighter">OPERATIONS_CMD</div>
+<div class="text-[10px] text-zinc-500 font-mono">V.2.4.9_SECURE</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">groups</span> Mitarbeiter-KPIs
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded bg-violet-500/10 text-violet-400 border-l-4 border-violet-600 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">payments</span> Finanz-Impact
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span> Einstellungen
+            </a>
+</nav>
+<div class="px-4 mt-auto space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-xs text-zinc-500 hover:text-zinc-300" href="#">
+<span class="material-symbols-outlined text-sm">help_center</span> Support
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-xs text-zinc-500 hover:text-zinc-300" href="#">
+<span class="material-symbols-outlined text-sm">terminal</span> Logs
+            </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="pl-64 pt-16 min-h-screen">
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+<!-- Hero Header Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 space-y-2">
+<h1 class="text-4xl font-headline font-bold tracking-tighter text-on-surface uppercase">Financial Impact <span class="text-primary">&amp;</span> Revenue Leakage</h1>
+<p class="text-zinc-500 font-body text-sm max-w-xl">Deep-Analysis zur Identifizierung von Dokumentationslücken und nicht abgerechneten Mehrleistungen in Echtzeit.</p>
+</div>
+<div class="flex justify-end items-start gap-4">
+<div class="bg-surface-container-high p-4 rounded-xl border-l-4 border-tertiary">
+<div class="text-[10px] font-label text-zinc-400 uppercase tracking-widest">Recovered Revenue</div>
+<div class="text-2xl font-headline font-bold text-tertiary">+124.500 €</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid - KPIs & Visuals -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Waterfall Chart Card -->
+<div class="col-span-12 lg:col-span-8 glass-card rounded-xl p-6 border border-white/5 relative overflow-hidden">
+<div class="flex justify-between items-center mb-10">
+<h2 class="text-lg font-headline font-bold uppercase tracking-tight">Geplanter vs. Tatsächlicher Umsatz</h2>
+<span class="text-[10px] font-label text-zinc-500 tracking-widest uppercase">Q3_FISCAL_READOUT</span>
+</div>
+<div class="h-64 flex items-end gap-4 relative">
+<!-- Simulated Waterfall bars -->
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 h-[80%] rounded-t-sm relative group">
+<div class="absolute inset-0 bg-primary/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute top-[-24px] w-full text-center text-[10px] font-label">2.4M</div>
+</div>
+<span class="text-[10px] font-label text-zinc-500">Plan</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-error h-[15%] mb-[65%] rounded-sm relative">
+<div class="absolute top-[-24px] w-full text-center text-[10px] font-label text-error">-340k</div>
+</div>
+<span class="text-[10px] font-label text-zinc-500">Doku-Lücke</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-tertiary h-[10%] mb-[55%] rounded-sm relative">
+<div class="absolute top-[-24px] w-full text-center text-[10px] font-label text-tertiary">+124k</div>
+</div>
+<span class="text-[10px] font-label text-zinc-500">Recovery</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary h-[75%] rounded-t-sm relative">
+<div class="absolute top-[-24px] w-full text-center text-[10px] font-label text-primary">2.18M</div>
+</div>
+<span class="text-[10px] font-label text-zinc-500">Ist</span>
+</div>
+</div>
+</div>
+<!-- Documentation Efficiency Gauge -->
+<div class="col-span-12 lg:col-span-4 glass-card rounded-xl p-6 border border-white/5 flex flex-col justify-between">
+<div>
+<h2 class="text-lg font-headline font-bold uppercase tracking-tight mb-1">Dokumentations-Effizienz</h2>
+<p class="text-xs text-zinc-500">Genauigkeit der Leistungserfassung</p>
+</div>
+<div class="relative py-8 flex justify-center">
+<svg class="w-48 h-48 -rotate-90">
+<circle class="text-surface-container-highest" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="150" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-headline font-bold text-on-surface">72%</span>
+<span class="text-[10px] font-label text-tertiary uppercase tracking-widest">+5.2% Δ</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-zinc-500">Soll-Vorgabe</span>
+<span class="text-on-surface">95%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[72%]"></div>
+</div>
+</div>
+</div>
+<!-- Burn Rate Sparklines -->
+<div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-xl p-6 border border-white/5 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-[10px] font-label text-zinc-400 uppercase tracking-widest">Burn Rate / Tag</div>
+<div class="text-2xl font-headline font-bold">14.200 €</div>
+</div>
+<span class="material-symbols-outlined text-error">trending_up</span>
+</div>
+<div class="h-12 w-full flex items-end gap-1">
+<div class="flex-1 bg-surface-container-highest h-[40%] rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest h-[60%] rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest h-[50%] rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest h-[80%] rounded-sm"></div>
+<div class="flex-1 bg-error/50 h-[95%] rounded-sm"></div>
+<div class="flex-1 bg-error h-[100%] rounded-sm shadow-[0_0_10px_rgba(255,180,171,0.3)]"></div>
+</div>
+</div>
+<div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-xl p-6 border border-white/5 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-[10px] font-label text-zinc-400 uppercase tracking-widest">Identifizierte Lücken</div>
+<div class="text-2xl font-headline font-bold">42 <span class="text-xs text-zinc-500 font-normal">Einheiten</span></div>
+</div>
+<span class="material-symbols-outlined text-primary">find_in_page</span>
+</div>
+<div class="h-12 w-full flex items-end gap-1">
+<div class="flex-1 bg-primary/20 h-[30%] rounded-sm"></div>
+<div class="flex-1 bg-primary/40 h-[45%] rounded-sm"></div>
+<div class="flex-1 bg-primary/60 h-[40%] rounded-sm"></div>
+<div class="flex-1 bg-primary/80 h-[60%] rounded-sm"></div>
+<div class="flex-1 bg-primary h-[85%] rounded-sm shadow-[0_0_10px_rgba(208,188,255,0.3)]"></div>
+<div class="flex-1 bg-primary h-[70%] rounded-sm"></div>
+</div>
+</div>
+<!-- Unvorhergesehene Mehrarbeit Table -->
+<div class="col-span-12 lg:col-span-6 glass-card rounded-xl border border-white/5 overflow-hidden">
+<div class="p-6 border-b border-white/5 flex justify-between items-center">
+<h2 class="text-lg font-headline font-bold uppercase tracking-tight">Unvorhergesehene Mehrarbeit</h2>
+<button class="text-[10px] font-label text-primary hover:underline uppercase tracking-widest">Alle Exponate anzeigen</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm">
+<thead class="bg-surface-container-low text-[10px] font-label uppercase tracking-widest text-zinc-500">
+<tr>
+<th class="px-6 py-4">Bezeichnung / Sektor</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Potenzial</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5 font-body">
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="font-medium text-on-surface">Abwasserrohr Sektor 4</div>
+<div class="text-[10px] text-zinc-500 uppercase tracking-tighter">Bodenklasse 6 Abweichung</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-label bg-error/10 text-error">UNERFASST</span>
+</td>
+<td class="px-6 py-4 text-right font-headline font-bold group-hover:text-primary transition-colors">12.400 €</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="font-medium text-on-surface">Kabelschacht 12.A</div>
+<div class="text-[10px] text-zinc-500 uppercase tracking-tighter">Zusatzdämmung Brandschutz</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-label bg-tertiary/10 text-tertiary">IN RECHNUNG</span>
+</td>
+<td class="px-6 py-4 text-right font-headline font-bold group-hover:text-primary transition-colors">4.850 €</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="font-medium text-on-surface">Entwässerung Südflanke</div>
+<div class="text-[10px] text-zinc-500 uppercase tracking-tighter">Starkregen-Sicherungsmaßnahmen</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-label bg-primary/10 text-primary">FREIGABE AUSSTEHEND</span>
+</td>
+<td class="px-6 py-4 text-right font-headline font-bold group-hover:text-primary transition-colors">28.900 €</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Construction Site Map Preview (Contextual) -->
+<div class="col-span-12 lg:col-span-6 glass-card rounded-xl border border-white/5 relative overflow-hidden group">
+<div class="absolute inset-0 z-0">
+<img alt="Aerial view of construction site mapping" class="w-full h-full object-cover opacity-30 grayscale group-hover:scale-105 transition-transform duration-700" data-alt="Technical high-contrast aerial drone mapping of a large infrastructure construction site at night with glowing purple and blue grid overlays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuscFUAxyRI_nmPQ8KJNbGhL_eH8oo3LkGGEHm-2y7KYj6q23LSwJe7lQabfTzAcaFWpcNheTJujKaI2KT8YvVTtwBvHQe3Czf4UCwRnd11g0UttBWAjy9KSoRBxi2AHe9ymczatonSDMfi2rKqjDjcnJgzTD4XpT86UpoAiN7rqshQhFD8S-wlVymQ0_RJJf44_InSSKAcETLi4MB0nYn1hHRGPNOV4XEkh6fIGmr8W3VwqwzvTRv9pUyWf-gJkOb-TtMrwczvwKi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</div>
+<div class="relative z-10 p-6 h-full flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="text-lg font-headline font-bold uppercase tracking-tight">Geodaten Leakage-Mapping</h2>
+<p class="text-xs text-zinc-400">Visuelle Lokalisierung von Abrechnungsrisiken</p>
+</div>
+<div class="flex gap-2">
+<span class="bg-surface-container-highest w-8 h-8 rounded flex items-center justify-center cursor-pointer hover:text-primary"><span class="material-symbols-outlined text-sm">fullscreen</span></span>
+<span class="bg-surface-container-highest w-8 h-8 rounded flex items-center justify-center cursor-pointer hover:text-primary"><span class="material-symbols-outlined text-sm">my_location</span></span>
+</div>
+</div>
+<div class="flex gap-4 mt-20">
+<div class="bg-surface-container-lowest/80 backdrop-blur-md p-3 rounded-lg flex-1 border border-white/5">
+<div class="text-[8px] font-label uppercase text-zinc-500 mb-1">Active Sektor</div>
+<div class="text-sm font-headline font-bold">SEKTOR_04_NORTH</div>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></div>
+<span class="text-[9px] font-label text-error uppercase">3 Anomalien entdeckt</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest/80 backdrop-blur-md p-3 rounded-lg flex-1 border border-white/5">
+<div class="text-[8px] font-label uppercase text-zinc-500 mb-1">Recovery Rate</div>
+<div class="text-sm font-headline font-bold text-tertiary">84.2%</div>
+<div class="text-[9px] text-zinc-500 mt-1 uppercase">Top-Performant</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button - Only for Primary Transaction -->
+<div class="fixed bottom-8 right-8">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-[0_0_30px_rgba(139,92,246,0.3)] flex items-center gap-3 font-headline font-bold uppercase tracking-widest hover:scale-105 transition-transform active:scale-95 group">
+<span class="material-symbols-outlined group-hover:rotate-12 transition-transform">add_task</span>
+            Neue Mehrarbeit Erfassen
+        </button>
+</div>
+</body></html>

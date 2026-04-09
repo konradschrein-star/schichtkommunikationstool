@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="light" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#e2e2e2",
+                    "on-primary-fixed-variant": "#e2e2e2",
+                    "secondary-fixed-dim": "#ababab",
+                    "surface-bright": "#f9f9f9",
+                    "primary": "#000000",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f3f3f3",
+                    "on-primary-fixed": "#ffffff",
+                    "on-tertiary-fixed-variant": "#e2e2e2",
+                    "on-tertiary-fixed": "#ffffff",
+                    "on-error-container": "#410002",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-dim": "#dadada",
+                    "outline-variant": "#c6c6c6",
+                    "outline": "#777777",
+                    "primary-fixed-dim": "#474747",
+                    "tertiary-fixed": "#5e5e5e",
+                    "secondary": "#5e5e5e",
+                    "surface-container": "#eeeeee",
+                    "on-background": "#1b1b1b",
+                    "surface": "#f9f9f9",
+                    "inverse-primary": "#c6c6c6",
+                    "on-primary-container": "#ffffff",
+                    "tertiary-fixed-dim": "#474747",
+                    "inverse-surface": "#303030",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#474747",
+                    "surface-variant": "#e2e2e2",
+                    "tertiary": "#3b3b3b",
+                    "on-tertiary-container": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#c6c6c6",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "primary-container": "#3b3b3b",
+                    "on-secondary-fixed-variant": "#3b3b3b",
+                    "tertiary-container": "#747474",
+                    "surface-container-high": "#e8e8e8",
+                    "on-surface": "#1b1b1b",
+                    "on-secondary-container": "#1b1b1b",
+                    "background": "#f9f9f9",
+                    "inverse-on-surface": "#f1f1f1",
+                    "secondary-container": "#d4d4d4",
+                    "surface-tint": "#5e5e5e",
+                    "on-primary": "#e2e2e2",
+                    "primary-fixed": "#5e5e5e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "1rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .waveform-bar {
+            width: 4px;
+            background-color: currentColor;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-50 bg-[#f9f9f9] dark:bg-zinc-950">
+<nav class="flex justify-between items-center px-6 py-4 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant/15">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional man in high-visibility gear, warm lighting, architectural site in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnY79ugdktICtyQ89D-wheBgJhuIV7BQUj8L-VVslj-Qqz4g1uyC0-Vf_n0PFyRDDxUyKNBwwI7pANW5cXir2QSHBoQfhugBpUjrqNt1XhvyudWNznkwvm60A1crOFMe2Ee7ypl0KY_YWmLC5uQt-bf5fUIPNzGIvaJf3xaxx05NLYxNdljkJAqY76gAg1GZm8MFSin79ZitKCWQxFLyTxfu3XCFShyKfQX-r8yhF-6Z37sOroT4vrWNbRb0mC4wZfER41TfnlHBtg"/>
+</div>
+<h1 class="font-inter font-semibold tracking-tight text-lg text-black dark:text-white">Hallo Piotr</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-black dark:text-white font-bold transition-colors" href="#">Tasks</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-3 py-1 rounded-lg" href="#">Voice</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-3 py-1 rounded-lg" href="#">Files</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-3 py-1 rounded-lg" href="#">QA</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-black dark:text-white active:scale-95 duration-150">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-black dark:text-white active:scale-95 duration-150">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</nav>
+</header>
+<main class="max-w-screen-xl mx-auto px-6 py-12 md:py-20">
+<!-- Main Area: Action Tiles -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+<!-- Button 1: Success Green (Voice) -->
+<button class="group relative flex flex-col items-center justify-center min-h-[400px] bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-xl transition-all duration-300 shadow-2xl shadow-green-500/10 active:scale-95 overflow-hidden">
+<div class="mb-8">
+<span class="material-symbols-outlined !text-7xl">mic</span>
+</div>
+<span class="text-2xl md:text-3xl font-bold tracking-tight mb-8">Sprachnotiz aufnehmen</span>
+<!-- Audio Waveform Visualization (Static for UI) -->
+<div class="flex items-end gap-1.5 h-12">
+<div class="waveform-bar h-4 opacity-40"></div>
+<div class="waveform-bar h-8 opacity-60"></div>
+<div class="waveform-bar h-12"></div>
+<div class="waveform-bar h-6"></div>
+<div class="waveform-bar h-10 opacity-80"></div>
+<div class="waveform-bar h-5 opacity-50"></div>
+<div class="waveform-bar h-8 opacity-70"></div>
+<div class="waveform-bar h-11"></div>
+<div class="waveform-bar h-4 opacity-40"></div>
+</div>
+<!-- Abstract decorative element -->
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+</button>
+<!-- Button 2: White/Gray Outline (Upload) -->
+<button class="group relative flex flex-col items-center justify-center min-h-[400px] bg-surface-container-lowest border border-outline-variant/30 hover:bg-surface-container-low text-on-surface rounded-xl transition-all duration-300 shadow-sm active:scale-95 overflow-hidden">
+<div class="mb-8 text-primary">
+<span class="material-symbols-outlined !text-7xl">photo_camera</span>
+</div>
+<span class="text-2xl md:text-3xl font-bold tracking-tight mb-4">Foto / Datei hochladen</span>
+<span class="text-on-surface-variant font-medium opacity-60">PDF, JPG, PNG oder DOCX</span>
+<!-- Abstract decorative element -->
+<div class="absolute -left-12 -bottom-12 w-48 h-48 bg-surface-container-highest/50 rounded-full blur-3xl"></div>
+</button>
+</div>
+<!-- QA-Feed Section -->
+<section class="max-w-4xl mx-auto">
+<div class="flex items-center justify-between mb-10">
+<h2 class="text-3xl font-extrabold tracking-tighter text-on-surface">QA-Feed</h2>
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Live AI Sync</span>
+</div>
+</div>
+<div class="space-y-6">
+<!-- AI Question Card -->
+<div class="bg-surface-container-low p-8 rounded-xl border-l-8 border-primary">
+<div class="flex gap-6 items-start">
+<div class="w-12 h-12 shrink-0 bg-primary text-white rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<div class="space-y-4 w-full">
+<p class="text-2xl md:text-3xl font-medium leading-snug text-on-surface">
+                                Fehlen noch Angaben zum <span class="font-bold underline decoration-4 decoration-primary/20">Abwasserrohr</span>?
+                            </p>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-2 bg-surface-container-lowest hover:bg-white border border-outline-variant/30 rounded-full text-sm font-bold transition-all">Details hinzufügen</button>
+<button class="px-6 py-2 bg-surface-container-lowest hover:bg-white border border-outline-variant/30 rounded-full text-sm font-bold transition-all">Erledigt</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Update Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="flex gap-6 items-start opacity-60 hover:opacity-100 transition-opacity">
+<div class="w-12 h-12 shrink-0 bg-surface-container text-on-surface rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="space-y-1">
+<p class="text-xl font-semibold text-on-surface">Tagesbericht von gestern wurde verarbeitet</p>
+<p class="text-on-surface-variant">Vor 2 Stunden • Automatisch archiviert</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Hidden on desktop, visible on mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#f9f9f9]/80 dark:bg-zinc-950/80 backdrop-blur-xl z-50 border-t border-zinc-200/15 dark:border-zinc-800/15">
+<button class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 p-2.5 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-inter text-[11px] font-medium tracking-wide uppercase mt-1">Tasks</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black rounded-xl p-2.5 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">mic</span>
+<span class="font-inter text-[11px] font-medium tracking-wide uppercase mt-1">Voice</span>
+</button>
+<button class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 p-2.5 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">folder</span>
+<span class="font-inter text-[11px] font-medium tracking-wide uppercase mt-1">Files</span>
+</button>
+<button class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 p-2.5 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-inter text-[11px] font-medium tracking-wide uppercase mt-1">QA</span>
+</button>
+</nav>
+</body></html>

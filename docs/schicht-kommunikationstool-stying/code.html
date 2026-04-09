@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#ffffff",
+                    "outline": "#777777",
+                    "background": "#f9f9f7",
+                    "surface-bright": "#f9f9f7",
+                    "primary-fixed": "#5f5e5e",
+                    "on-error-container": "#410002",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#da3433",
+                    "surface-container-high": "#e8e8e6",
+                    "on-tertiary-fixed-variant": "#ffdad6",
+                    "tertiary-fixed-dim": "#930010",
+                    "on-primary": "#e5e2e1",
+                    "surface-dim": "#dadad8",
+                    "primary-fixed-dim": "#474746",
+                    "primary-container": "#3c3b3b",
+                    "on-primary-fixed-variant": "#e5e2e1",
+                    "inverse-surface": "#2f3130",
+                    "secondary-container": "#c7d3ff",
+                    "on-background": "#1a1c1b",
+                    "inverse-primary": "#c8c6c5",
+                    "surface-variant": "#e2e3e1",
+                    "on-secondary-fixed": "#001849",
+                    "secondary-fixed-dim": "#8aa8ff",
+                    "surface-container-low": "#f4f4f2",
+                    "on-tertiary-container": "#ffffff",
+                    "on-secondary-fixed-variant": "#00358c",
+                    "on-surface-variant": "#474747",
+                    "primary": "#000000",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffdad6",
+                    "on-tertiary-fixed": "#ffffff",
+                    "surface": "#f9f9f7",
+                    "inverse-on-surface": "#f1f1ef",
+                    "secondary-fixed": "#b3c5ff",
+                    "tertiary-fixed": "#ba1a20",
+                    "on-primary-fixed": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e2e3e1",
+                    "outline-variant": "#c6c6c6",
+                    "on-surface": "#1a1c1b",
+                    "surface-tint": "#5f5e5e",
+                    "tertiary": "#7d000c",
+                    "on-secondary-container": "#001849",
+                    "secondary": "#0054d6",
+                    "surface-container": "#eeeeec"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "1rem",
+                    "xl": "1.25rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-neutral-50 dark:bg-neutral-950 flex flex-col h-full p-6 space-y-8 font-['Inter'] text-sm font-medium tracking-normal">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-white">architecture</span>
+</div>
+<div>
+<h2 class="text-lg font-bold text-black dark:text-white leading-tight">Project Alpha</h2>
+<p class="text-xs text-neutral-500 uppercase tracking-widest">Site Lead View</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-black dark:text-white font-bold flex items-center gap-3 py-3 px-4 bg-white dark:bg-neutral-900 rounded-lg cursor-pointer transition-all duration-300" href="#">
+<span class="material-symbols-outlined">assignment</span>
+                Today's Shift
+            </a>
+<a class="text-neutral-500 dark:text-neutral-400 flex items-center gap-3 py-3 px-4 hover:translate-x-1 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined">history</span>
+                Past Shifts
+            </a>
+<a class="text-neutral-500 dark:text-neutral-400 flex items-center gap-3 py-3 px-4 hover:translate-x-1 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Reports
+            </a>
+<a class="text-neutral-500 dark:text-neutral-400 flex items-center gap-3 py-3 px-4 hover:translate-x-1 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined">group</span>
+                Team Management
+            </a>
+</nav>
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-full font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Report
+        </button>
+<div class="pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-1">
+<a class="text-neutral-500 dark:text-neutral-400 flex items-center gap-3 py-2 px-4 hover:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="text-neutral-500 dark:text-neutral-400 flex items-center gap-3 py-2 px-4 hover:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="ml-64 min-h-screen bg-surface-container-low p-8">
+<!-- Header -->
+<header class="flex justify-between items-end mb-12">
+<div>
+<nav class="flex gap-2 text-xs font-bold tracking-widest text-on-surface-variant uppercase mb-2">
+<span>Sector 4</span>
+<span>/</span>
+<span class="text-secondary">Active</span>
+</nav>
+<h1 class="text-5xl font-black tracking-tighter text-primary">Shift Overview: Night Shift Sector 4</h1>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-surface-container-highest px-4 py-2 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">schedule</span>
+<span class="text-sm font-bold">Oct 24, 2023 | 22:00 - 06:00</span>
+</div>
+</div>
+</header>
+<!-- Content Grid (Asymmetric Bento) -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Section 1: Shift Summary (Left Column) -->
+<section class="col-span-8 flex flex-col gap-6">
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0_20px_40px_rgba(26,28,27,0.04)]">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary scale-125">auto_awesome</span>
+<h2 class="text-2xl font-bold tracking-tight">Shift Summary</h2>
+</div>
+<div class="prose prose-neutral max-w-none space-y-6">
+<div>
+<h3 class="text-lg font-bold mb-2">Progress in Sector 4</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                                Foundation pouring for the main support column is at <span class="font-bold text-primary">85% completion</span>. Structural integrity checks passed at 03:00. Night shift focused on concrete stabilization in the northern quadrant.
+                            </p>
+</div>
+<ul class="grid grid-cols-2 gap-4 list-none p-0">
+<li class="bg-surface p-4 rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div>
+<span class="block font-bold">Excavation Site Alpha</span>
+<span class="text-sm text-on-surface-variant">Cleared and ready for piling.</span>
+</div>
+</li>
+<li class="bg-surface p-4 rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div class="text-sm">
+<span class="block font-bold">Utility Mapping</span>
+<span class="text-sm text-on-surface-variant">Phase 2 fiber lines tagged.</span>
+</div>
+</li>
+</ul>
+<div>
+<h3 class="text-lg font-bold mb-2">Material Usage</h3>
+<div class="grid grid-cols-3 gap-6">
+<div class="border-l-2 border-surface-container-high pl-4">
+<span class="text-xs uppercase tracking-widest text-on-surface-variant">Concrete</span>
+<span class="block text-2xl font-bold">142m³</span>
+</div>
+<div class="border-l-2 border-surface-container-high pl-4">
+<span class="text-xs uppercase tracking-widest text-on-surface-variant">Steel Rebar</span>
+<span class="block text-2xl font-bold">4.2 Tons</span>
+</div>
+<div class="border-l-2 border-surface-container-high pl-4">
+<span class="text-xs uppercase tracking-widest text-on-surface-variant">Fuel Consumed</span>
+<span class="block text-2xl font-bold">890L</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 4: Employee Logs -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0_20px_40px_rgba(26,28,27,0.04)]">
+<div class="flex justify-between items-center mb-8">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">mic</span>
+<h2 class="text-2xl font-bold tracking-tight">Employee Logs</h2>
+</div>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2 text-on-surface-variant text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface rounded-full text-sm border-none focus:ring-2 focus:ring-secondary" placeholder="Search logs..." type="text"/>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="group flex items-center justify-between p-4 bg-surface rounded-lg hover:bg-surface-container-highest transition-colors">
+<div class="flex items-center gap-4">
+<img alt="Worker profile" class="w-10 h-10 rounded-full object-cover" data-alt="portrait of a focused construction foreman wearing a safety helmet and high-visibility vest in soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpamNpifHrpxA1BIzPCxM13iZOTZGwUjPYTpUOfNJZx6GwYNxDI3g8g7g9WNOXBoPhYWrbPNgKq6iYERMw4bli_hkYTk_bmpRULRj8QClS18qhqGh0oQaJr4UpYARvtih0oS1mHbbHT7U5kD9JFplRvBTBA0QXBAGZpmN_Y8dy-VTb3vkKrGUqb7xK7IjrBSqhdTB0Q58TzHE1p6PsS5hD3jiq7NpC0mWdpgRxNx8nDcqcR6kJk_gKFbmx74tUL3T0jWjH2QAZzjZB"/>
+<div>
+<span class="font-bold block">Marcus Chen</span>
+<span class="text-xs uppercase tracking-widest font-bold text-secondary">Civil Engineering</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm">
+<button class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</button>
+<div class="w-32 h-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="w-1/3 h-full bg-secondary"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">0:24</span>
+</div>
+<a class="text-xs font-bold underline underline-offset-4 decoration-secondary" href="#">View Transcript</a>
+</div>
+</div>
+<div class="group flex items-center justify-between p-4 bg-surface rounded-lg hover:bg-surface-container-highest transition-colors">
+<div class="flex items-center gap-4">
+<img alt="Worker profile" class="w-10 h-10 rounded-full object-cover" data-alt="close up headshot of a female site engineer with hard hat looking confident at professional workspace environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrnk9LBqGseSUGqK6VO7VTchFZyaj7efCcJJQiBJJkkKPJ2XBNS9hrLeydxHwgMm3xqCb_QOSWu0ym4U4AQuEFWXbp-0BR_gnb45HKoXdSdjzF1zMlvU4nB0_dROsjKQ1o2l7eNkRd3dXJ5TnjfSWPhsaJ6A77Tpjv8TxRL3HIqbRGPJNkT0EiBrGj_297Vx0p5GN9xrs7bdk66xiOt2o1xuhBsWlxDkI4NizvTJrQ2I9DjxUYYwfv3hDE_tvMXdhG7XlVSSpUtv2d"/>
+<div>
+<span class="font-bold block">Sarah Jenks</span>
+<span class="text-xs uppercase tracking-widest font-bold text-tertiary">Delay</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm">
+<button class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</button>
+<div class="w-32 h-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="w-0 h-full bg-secondary"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">1:12</span>
+</div>
+<a class="text-xs font-bold underline underline-offset-4 decoration-secondary" href="#">View Transcript</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Content (Right Column) -->
+<section class="col-span-4 flex flex-col gap-6">
+<!-- Section 2: Critical Blockers -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0_20px_40px_rgba(26,28,27,0.04)] border-l-8 border-tertiary">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-tertiary">warning</span>
+<h2 class="text-2xl font-bold tracking-tight">Critical Blockers</h2>
+</div>
+<div class="space-y-4">
+<div class="p-5 bg-surface rounded-lg border-l-4 border-tertiary">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-tertiary-container text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">High Priority</span>
+<span class="text-xs text-on-surface-variant font-medium">02:45 AM</span>
+</div>
+<h4 class="font-bold text-lg mb-1">Water pipe found in Sector 4</h4>
+<p class="text-sm text-on-surface-variant mb-4">Unmapped 12-inch main discovered during digging near grid line G-12. All excavation halted.</p>
+<button class="w-full bg-white border border-outline-variant py-2 rounded-lg text-sm font-bold hover:bg-neutral-50 transition-colors">Assign Team</button>
+</div>
+</div>
+</div>
+<!-- Section 3: Handover Checklist -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0_20px_40px_rgba(26,28,27,0.04)]">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+<h2 class="text-2xl font-bold tracking-tight">Handover Checklist</h2>
+</div>
+<div class="space-y-3">
+<label class="flex items-center gap-4 p-4 bg-surface rounded-lg cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" type="checkbox"/>
+<span class="text-sm font-medium group-hover:translate-x-1 transition-transform">Refuel excavator (Cat-320)</span>
+</label>
+<label class="flex items-center gap-4 p-4 bg-surface rounded-lg cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" type="checkbox"/>
+<span class="text-sm font-medium line-through text-on-surface-variant group-hover:translate-x-1 transition-transform">Secure Sector 4 fencing</span>
+</label>
+<label class="flex items-center gap-4 p-4 bg-surface rounded-lg cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" type="checkbox"/>
+<span class="text-sm font-medium group-hover:translate-x-1 transition-transform">Update drainage permit logs</span>
+</label>
+<label class="flex items-center gap-4 p-4 bg-surface rounded-lg cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" type="checkbox"/>
+<span class="text-sm font-medium group-hover:translate-x-1 transition-transform">Transfer keys to Morning Lead</span>
+</label>
+</div>
+<button class="mt-6 w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-outline-variant rounded-lg text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+<span class="text-sm font-bold">Add Checklist Item</span>
+</button>
+</div>
+<!-- Small Visual Metric -->
+<div class="bg-primary p-8 rounded-lg text-white">
+<span class="text-xs uppercase tracking-widest text-neutral-400 font-bold">Shift Performance</span>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-4xl font-black">92%</span>
+<span class="material-symbols-outlined text-secondary mb-1">trending_up</span>
+</div>
+<p class="text-xs text-neutral-400 mt-4 leading-relaxed">
+                        Above target for night operations. Concrete stability indices are stable across all test points.
+                    </p>
+</div>
+</section>
+</div>
+</main>
+</body></html>
