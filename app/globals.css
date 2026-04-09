@@ -6,6 +6,8 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
+    --font-inter: system-ui, -apple-system, sans-serif;
+    --font-playfair: Georgia, serif;
   }
 
   .dark {
