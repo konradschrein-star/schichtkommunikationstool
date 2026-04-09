@@ -33,6 +33,16 @@ const nextConfig = {
     }
     return config;
   },
+
+  // Static file serving for uploaded media
+  async rewrites() {
+    return [
+      {
+        source: '/media/:path*',
+        destination: '/data/media/:path*',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
