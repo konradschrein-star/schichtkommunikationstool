@@ -2,7 +2,7 @@
 // MULTI-AGENT WORKFLOW
 // ============================================================================
 
-import { createLLMClient, type LLMProvider } from './llm-clients';
+import { createLLMClient, type LLMSettings } from './llm-clients';
 import {
   QA_AGENT_PROMPT,
   CLEANER_AGENT_PROMPT,
@@ -29,17 +29,9 @@ import {
 /**
  * Runs QA validation on worker transcript
  */
-export async function runQAAgent(
-  transcript: string,
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
-): Promise<QAOutput> {
-  const client = createLLMClient(provider, apiKey);
-
-  const prompt = injectPromptVariables(QA_AGENT_PROMPT, {
-    transcript,
-  });
-
+export async function runQAAgent(transcript: string, settings: LLMSettings): Promise<QAOutput> {
+  const client = createLLMClient(settings);
+  const prompt = injectPromptVariables(QA_AGENT_PROMPT, { transcript });
   const response = await client.call(prompt);
   return parseQAResponse(response);
 }
@@ -65,16 +57,13 @@ export interface CleanerAgentInput {
  */
 export async function runCleanerAgent(
   input: CleanerAgentInput,
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
+  settings: LLMSettings
 ): Promise<CleanerOutput> {
-  const client = createLLMClient(provider, apiKey);
-
+  const client = createLLMClient(settings);
   const prompt = injectPromptVariables(CLEANER_AGENT_PROMPT, {
     transcript: input.transcript,
     frontmatter: JSON.stringify(input.frontmatter, null, 2),
   });
-
   const response = await client.call(prompt);
   return parseCleanerResponse(response);
 }
@@ -88,17 +77,11 @@ export async function runCleanerAgent(
  */
 export async function translatePolishToGerman(
   polishText: string,
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
+  settings: LLMSettings
 ): Promise<string> {
-  const client = createLLMClient(provider, apiKey);
-
-  const prompt = injectPromptVariables(TRANSLATION_PROMPT, {
-    polishText,
-  });
-
+  const client = createLLMClient(settings);
+  const prompt = injectPromptVariables(TRANSLATION_PROMPT, { polishText });
   const response = await client.call(prompt);
-  // Response is just the translation, no JSON parsing needed
   return response.trim();
 }
 
@@ -129,12 +112,10 @@ export interface ShiftAggregatorInput {
  */
 export async function runShiftAggregator(
   input: ShiftAggregatorInput,
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
+  settings: LLMSettings
 ): Promise<ShiftAggregationOutput> {
-  const client = createLLMClient(provider, apiKey);
+  const client = createLLMClient(settings);
 
-  // Format reports as markdown
   const reportsMarkdown = input.reports
     .map(
       (r) => `### ${r.workerName}
@@ -187,12 +168,10 @@ export interface BossKPIAgentInput {
  */
 export async function runBossKPIAgent(
   input: BossKPIAgentInput,
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
+  settings: LLMSettings
 ): Promise<BossKPIOutput> {
-  const client = createLLMClient(provider, apiKey);
+  const client = createLLMClient(settings);
 
-  // Format reports with metadata
   const reportsMarkdown = input.reports
     .map(
       (r) => `### ${r.workerName} (${r.profession || 'Worker'})
@@ -227,17 +206,14 @@ ${r.content}
 export async function processWorkerReport(
   transcript: string,
   frontmatter: CleanerAgentInput['frontmatter'],
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
+  settings: LLMSettings
 ): Promise<{
   qaResult: QAOutput;
   cleanerResult?: CleanerOutput;
   translatedText?: string;
 }> {
   // Step 1: QA validation
-  const qaResult = await runQAAgent(transcript, apiKey, provider);
-
-  // If QA fails, return early
+  const qaResult = await runQAAgent(transcript, settings);
   if (!qaResult.isComplete) {
     return { qaResult };
   }
@@ -245,21 +221,13 @@ export async function processWorkerReport(
   // Step 2: Translation if Polish
   let translatedText: string | undefined;
   let textToClean = transcript;
-
   if (frontmatter.language === 'pl') {
-    translatedText = await translatePolishToGerman(transcript, apiKey, provider);
+    translatedText = await translatePolishToGerman(transcript, settings);
     textToClean = translatedText;
   }
 
   // Step 3: Clean and structure
-  const cleanerResult = await runCleanerAgent(
-    {
-      transcript: textToClean,
-      frontmatter,
-    },
-    apiKey,
-    provider
-  );
+  const cleanerResult = await runCleanerAgent({ transcript: textToClean, frontmatter }, settings);
 
   return { qaResult, cleanerResult, translatedText };
 }
@@ -272,13 +240,11 @@ export async function processShiftCompletion(
     reports: BossKPIAgentInput['reports'];
     shiftMeta: BossKPIAgentInput['shiftMeta'];
   },
-  apiKey: string,
-  provider: LLMProvider = 'anthropic'
+  settings: LLMSettings
 ): Promise<{
   aggregation: ShiftAggregationOutput;
   kpis: BossKPIOutput;
 }> {
-  // Run aggregator and KPI extraction in parallel
   const [aggregation, kpis] = await Promise.all([
     runShiftAggregator(
       {
@@ -289,10 +255,9 @@ export async function processShiftCompletion(
         })),
         shiftMeta: shiftData.shiftMeta,
       },
-      apiKey,
-      provider
+      settings
     ),
-    runBossKPIAgent(shiftData, apiKey, provider),
+    runBossKPIAgent(shiftData, settings),
   ]);
 
   return { aggregation, kpis };

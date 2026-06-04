@@ -1,8 +1,7 @@
 import RecordingClient from "@/components/worker/RecordingClient";
-import { db } from "@/db";
-import { shifts, users } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
-import { redirect } from "next/navigation";
+import { getActiveShift } from "@/lib/store";
+import { getCurrentUser } from "@/lib/session";
+import Link from "next/link";
 
 interface WorkerPageProps {
   searchParams: Promise<{
@@ -14,25 +13,33 @@ interface WorkerPageProps {
 
 export default async function WorkerPage({ searchParams }: WorkerPageProps) {
   const params = await searchParams;
-  const { workerId, workerName, profession } = params;
+  let { workerId, workerName, profession } = params;
+
+  // Fall back to the logged-in account when no explicit params are given.
+  if (!workerId || !workerName) {
+    const user = await getCurrentUser();
+    if (user) {
+      workerId = user.id;
+      workerName = user.name;
+      profession = profession ?? user.profession;
+    }
+  }
 
   if (!workerId || !workerName) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-6">
         <div className="max-w-md mx-auto text-center space-y-6">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-3xl font-bold text-black">Fehlende Daten</h1>
+          <div className="text-6xl mb-4">👷</div>
+          <h1 className="text-3xl font-bold text-black">Nicht angemeldet</h1>
           <p className="text-xl text-gray-600">
-            Bitte über das Dashboard einloggen
+            Bitte wähle zuerst dein Konto aus.
           </p>
-          <div className="bg-gray-50 rounded-xl p-6 text-left">
-            <p className="text-sm text-gray-600 mb-2">URL-Parameter erforderlich:</p>
-            <ul className="text-sm text-gray-800 space-y-1 font-mono">
-              <li>• workerId</li>
-              <li>• workerName</li>
-              <li>• profession (optional)</li>
-            </ul>
-          </div>
+          <Link
+            href="/"
+            className="inline-block px-8 py-4 bg-[#00D26A] hover:bg-[#00BD5F] text-white text-lg font-bold rounded-2xl shadow-lg transition-all"
+          >
+            Zur Anmeldung
+          </Link>
         </div>
       </div>
     );
@@ -40,12 +47,9 @@ export default async function WorkerPage({ searchParams }: WorkerPageProps) {
 
   let activeShift;
   try {
-    activeShift = await db.query.shifts.findFirst({
-      where: eq(shifts.status, "active"),
-      orderBy: [desc(shifts.date)],
-    });
+    activeShift = await getActiveShift();
   } catch (error) {
-    console.error("Database error fetching active shift:", error);
+    console.error("Error fetching active shift:", error);
   }
 
   if (!activeShift) {

@@ -1,5 +1,9 @@
 // ============================================================================
 // LLM CLIENT FACTORIES
+//
+// One unified interface over Anthropic / OpenAI / Gemini. Every provider
+// supports an optional `baseUrl` so we can point at a self-hosted gateway
+// (e.g. the VPS Gemini endpoint) and an optional `model` override.
 // ============================================================================
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -8,63 +12,55 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export type LLMProvider = 'anthropic' | 'openai' | 'gemini';
 
-// ============================================================================
-// ANTHROPIC CLIENT
-// ============================================================================
-
-export function createAnthropicClient(apiKey: string): Anthropic {
-  return new Anthropic({
-    apiKey,
-  });
+export interface LLMSettings {
+  provider: LLMProvider;
+  apiKey: string;
+  baseUrl?: string;
+  model?: string;
 }
 
-export async function callAnthropicAgent(
-  client: Anthropic,
-  systemPrompt: string,
-  model: string = 'claude-sonnet-4-20250514'
-): Promise<string> {
+const DEFAULT_MODELS: Record<LLMProvider, string> = {
+  anthropic: 'claude-sonnet-4-20250514',
+  openai: 'gpt-4o',
+  gemini: 'gemini-2.0-flash',
+};
+
+// ============================================================================
+// ANTHROPIC
+// ============================================================================
+
+async function callAnthropic(settings: LLMSettings, prompt: string): Promise<string> {
+  const client = new Anthropic({
+    apiKey: settings.apiKey,
+    ...(settings.baseUrl ? { baseURL: settings.baseUrl } : {}),
+  });
+
   const response = await client.messages.create({
-    model,
+    model: settings.model || DEFAULT_MODELS.anthropic,
     max_tokens: 4096,
-    messages: [
-      {
-        role: 'user',
-        content: systemPrompt,
-      },
-    ],
+    messages: [{ role: 'user', content: prompt }],
   });
 
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {
     throw new Error('No text content in Anthropic response');
   }
-
   return textContent.text;
 }
 
 // ============================================================================
-// OPENAI CLIENT
+// OPENAI (also covers OpenAI-compatible gateways via baseUrl)
 // ============================================================================
 
-export function createOpenAIClient(apiKey: string): OpenAI {
-  return new OpenAI({
-    apiKey,
+async function callOpenAI(settings: LLMSettings, prompt: string): Promise<string> {
+  const client = new OpenAI({
+    apiKey: settings.apiKey,
+    ...(settings.baseUrl ? { baseURL: settings.baseUrl } : {}),
   });
-}
 
-export async function callOpenAIAgent(
-  client: OpenAI,
-  systemPrompt: string,
-  model: string = 'gpt-4o'
-): Promise<string> {
   const response = await client.chat.completions.create({
-    model,
-    messages: [
-      {
-        role: 'user',
-        content: systemPrompt,
-      },
-    ],
+    model: settings.model || DEFAULT_MODELS.openai,
+    messages: [{ role: 'user', content: prompt }],
     max_tokens: 4096,
     temperature: 0,
   });
@@ -73,75 +69,46 @@ export async function callOpenAIAgent(
   if (!content) {
     throw new Error('No content in OpenAI response');
   }
-
   return content;
 }
 
 // ============================================================================
-// GEMINI CLIENT
+// GEMINI (Google-native; baseUrl points at a self-hosted/proxied endpoint)
 // ============================================================================
 
-export function createGeminiClient(apiKey: string): GoogleGenerativeAI {
-  return new GoogleGenerativeAI(apiKey);
-}
+async function callGemini(settings: LLMSettings, prompt: string): Promise<string> {
+  const client = new GoogleGenerativeAI(settings.apiKey);
+  const generativeModel = client.getGenerativeModel(
+    { model: settings.model || DEFAULT_MODELS.gemini },
+    settings.baseUrl ? { baseUrl: settings.baseUrl } : undefined
+  );
 
-export async function callGeminiAgent(
-  client: GoogleGenerativeAI,
-  systemPrompt: string,
-  model: string = 'gemini-2.0-flash-exp'
-): Promise<string> {
-  const generativeModel = client.getGenerativeModel({ model });
-
-  const result = await generativeModel.generateContent(systemPrompt);
-  const response = result.response;
-  const text = response.text();
-
+  const result = await generativeModel.generateContent(prompt);
+  const text = result.response.text();
   if (!text) {
     throw new Error('No text in Gemini response');
   }
-
   return text;
 }
 
 // ============================================================================
-// UNIFIED CLIENT INTERFACE
+// UNIFIED INTERFACE
 // ============================================================================
 
 export interface LLMClient {
   provider: LLMProvider;
-  call: (systemPrompt: string) => Promise<string>;
+  call: (prompt: string) => Promise<string>;
 }
 
-/**
- * Creates a unified LLM client for any provider
- */
-export function createLLMClient(provider: LLMProvider, apiKey: string): LLMClient {
-  switch (provider) {
-    case 'anthropic': {
-      const client = createAnthropicClient(apiKey);
-      return {
-        provider: 'anthropic',
-        call: (prompt: string) => callAnthropicAgent(client, prompt),
-      };
-    }
-
-    case 'openai': {
-      const client = createOpenAIClient(apiKey);
-      return {
-        provider: 'openai',
-        call: (prompt: string) => callOpenAIAgent(client, prompt),
-      };
-    }
-
-    case 'gemini': {
-      const client = createGeminiClient(apiKey);
-      return {
-        provider: 'gemini',
-        call: (prompt: string) => callGeminiAgent(client, prompt),
-      };
-    }
-
+export function createLLMClient(settings: LLMSettings): LLMClient {
+  switch (settings.provider) {
+    case 'anthropic':
+      return { provider: 'anthropic', call: (p) => callAnthropic(settings, p) };
+    case 'openai':
+      return { provider: 'openai', call: (p) => callOpenAI(settings, p) };
+    case 'gemini':
+      return { provider: 'gemini', call: (p) => callGemini(settings, p) };
     default:
-      throw new Error(`Unsupported LLM provider: ${provider}`);
+      throw new Error(`Unsupported LLM provider: ${settings.provider}`);
   }
 }

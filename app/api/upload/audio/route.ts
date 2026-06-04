@@ -39,11 +39,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<UploadRespons
       );
     }
 
-    // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(workerId)) {
+    // Validate id format (no path traversal). Accepts seeded ids like "u-piotr"
+    // as well as UUIDs.
+    if (!/^[a-zA-Z0-9_-]{1,64}$/.test(workerId)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid workerId format (must be UUID)' },
+        { success: false, error: 'Invalid workerId format' },
         { status: 400 }
       );
     }
@@ -55,10 +55,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<UploadRespons
     const audioFile = formData.get('audio') as Blob | null;
     if (audioFile) {
       // Validate audio file type
-      const audioMimeTypes = ['audio/webm', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
-      if (!audioMimeTypes.includes(audioFile.type)) {
+      const audioMimeTypes = ['audio/webm', 'audio/mp4', 'audio/wav', 'audio/mp3', 'audio/mpeg', 'audio/ogg'];
+      const audioType = audioFile.type.split(';')[0].trim();
+      if (!audioMimeTypes.includes(audioType)) {
         return NextResponse.json(
-          { success: false, error: `Invalid audio type: ${audioFile.type}. Allowed: webm, wav, mp3` },
+          { success: false, error: `Invalid audio type: ${audioFile.type}. Allowed: webm, mp4, wav, mp3, ogg` },
           { status: 400 }
         );
       }
@@ -74,12 +75,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<UploadRespons
       // Convert Blob to Buffer
       const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
 
-      // Save with appropriate extension
-      const extension = audioFile.type === 'audio/webm' ? 'webm'
-        : audioFile.type === 'audio/wav' ? 'wav'
-        : 'mp3';
-
-      audioPath = await saveAudioFile(audioBuffer, workerId, extension);
+      // Save with appropriate extension (saveAudioFile maps from a mime hint)
+      audioPath = await saveAudioFile(audioBuffer, workerId, audioType);
     }
 
     // Process image files (multiple possible)

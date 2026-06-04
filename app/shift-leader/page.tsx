@@ -1,37 +1,30 @@
-import { db } from '@/db';
-import { shifts, shiftAggregations } from '@/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { getLatestCompletedShiftWithAggregation, getActiveShift, getReportsByShift } from '@/lib/store';
 import CompleteShiftButton from '@/components/shift-leader/CompleteShiftButton';
+import AppNav from '@/components/AppNav';
+import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 export default async function ShiftLeaderPage() {
   let latestCompletedShift;
   try {
-    const completedShifts = await db.query.shifts.findMany({
-      where: eq(shifts.status, 'completed'),
-      with: {
-        aggregation: true,
-      },
-      orderBy: [desc(shifts.date)],
-      limit: 1,
-    });
-    latestCompletedShift = completedShifts[0];
+    latestCompletedShift = await getLatestCompletedShiftWithAggregation();
   } catch (error) {
     console.error('Error fetching completed shift:', error);
   }
 
   let activeShift;
   try {
-    activeShift = await db.query.shifts.findFirst({
-      where: eq(shifts.status, 'active'),
-      orderBy: [desc(shifts.date)],
-    });
+    activeShift = await getActiveShift();
   } catch (error) {
     console.error('Error fetching active shift:', error);
   }
 
   if (!latestCompletedShift || !latestCompletedShift.aggregation) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-white">
+        <AppNav active="leader" />
+        <div className="flex items-center justify-center p-6 min-h-[80vh]">
         <div className="max-w-2xl text-center space-y-8">
           <div className="text-8xl mb-6">📋</div>
           <h1 className="text-4xl font-bold text-black mb-4">Noch keine abgeschlossene Schicht</h1>
@@ -56,6 +49,7 @@ export default async function ShiftLeaderPage() {
               <CompleteShiftButton shiftId={activeShift.id} projectName={activeShift.projectName} />
             </div>
           )}
+        </div>
         </div>
       </div>
     );
@@ -83,8 +77,11 @@ export default async function ShiftLeaderPage() {
   const blocked = [...(summary.blocked || []), ...(summary.criticalIssues || [])];
   const nextActions = summary.nextShiftActions || [];
 
+  const reports = await getReportsByShift(latestCompletedShift.id);
+
   return (
     <div className="min-h-screen bg-white">
+      <AppNav active="leader" />
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="flex items-start justify-between mb-12 pb-8 border-b-4 border-black">
           <div>
@@ -145,10 +142,48 @@ export default async function ShiftLeaderPage() {
           </h2>
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-800 leading-relaxed text-lg whitespace-pre-line">
-              {aggregation.summaryMarkdownPath || 'Keine Zusammenfassung verfügbar.'}
+              {aggregation.summaryText || 'Keine Zusammenfassung verfügbar.'}
             </p>
           </div>
         </div>
+
+        {reports.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-black mb-6">
+              Einzelne Mitarbeiter-Berichte ({reports.length})
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {reports.map((r) => (
+                <Link
+                  key={r.id}
+                  href={`/report/${r.id}`}
+                  className="block bg-white border-2 border-gray-200 hover:border-black rounded-2xl p-5 transition-colors group"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-bold text-black">{r.workerName}</div>
+                    <div className="flex items-center gap-2">
+                      {r.language === 'pl' && (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-500">PL→DE</span>
+                      )}
+                      {r.hindrance && (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-red-100 text-red-700">⚠ VOB/B</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500 mb-2">
+                    {r.profession} · {r.location || 'Standort n/a'}
+                  </div>
+                  <p className="text-sm text-gray-700 line-clamp-2">
+                    {r.cleanedText.replace(/[*#]/g, '').slice(0, 140)}…
+                  </p>
+                  <div className="mt-3 text-sm font-semibold text-blue-600 group-hover:underline">
+                    Bericht ansehen →
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-12 pt-8 border-t-2 border-gray-200 text-center text-sm text-gray-500">
           <div className="mb-2">Aggregation erstellt: {new Date(aggregation.createdAt).toLocaleString('de-DE')}</div>

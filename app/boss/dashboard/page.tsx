@@ -1,5 +1,8 @@
 import { getAllShiftsWithKPIs } from '@/app/actions/shift-aggregation';
 import { ProductivityChart, HindranceHeatmap } from '@/components/boss/DashboardCharts';
+import AppNav from '@/components/AppNav';
+
+export const dynamic = 'force-dynamic';
 
 export default async function BossDashboard({
   searchParams,
@@ -79,6 +82,7 @@ export default async function BossDashboard({
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-white">
+      <AppNav active="boss" />
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-12">
           <div>

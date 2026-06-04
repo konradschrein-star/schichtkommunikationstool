@@ -1,22 +1,27 @@
 /**
  * Shift Aggregation Server Actions
  *
- * Handles shift completion and aggregation:
- * 1. Fetch all worker reports for the shift
- * 2. Run Shift Aggregator (summary for shift leader)
- * 3. Run Boss KPI Agent (analytics for management)
- * 4. Save aggregation + KPIs to database
- * 5. Update shift status to 'completed'
+ * On shift completion:
+ * 1. Gather all worker reports of the shift (from the flat-file store)
+ * 2. Shift Aggregator (handover summary for the shift leader)
+ * 3. Boss KPI Agent (analytics for management)
+ * 4. Persist aggregation (markdown + JSON artifacts + store record)
+ * 5. Mark shift completed
  */
 
 'use server';
 
-import { db } from '@/db';
-import { shiftAggregations, shifts, workerReports } from '@/db/schema';
-import { getAllReportsForShift, saveShiftAggregation, saveBossKPIs } from '@/lib/filesystem';
-import { getUserApiKey } from '@/lib/api-keys';
+import { saveShiftAggregation, saveBossKPIs } from '@/lib/filesystem';
+import { getLLMCredentials } from '@/lib/api-keys';
 import { processShiftCompletion } from '@/agents/workflow';
-import { eq, and } from 'drizzle-orm';
+import {
+  getShift,
+  getAggregation,
+  getReportsByShift,
+  createAggregation,
+  updateShift,
+  listShiftsWithAggregations,
+} from '@/lib/store';
 
 interface CompleteShiftInput {
   shiftId: string;
@@ -25,8 +30,6 @@ interface CompleteShiftInput {
 interface CompleteShiftSuccess {
   success: true;
   aggregationId: string;
-  summaryPath: string;
-  kpisPath: string;
   stats: {
     totalReports: number;
     totalWorkers: number;
@@ -42,141 +45,67 @@ interface CompleteShiftError {
 
 type CompleteShiftResponse = CompleteShiftSuccess | CompleteShiftError;
 
-export async function completeShift(
-  input: CompleteShiftInput
-): Promise<CompleteShiftResponse> {
+export async function completeShift(input: CompleteShiftInput): Promise<CompleteShiftResponse> {
   try {
     const { shiftId } = input;
 
-    // ============================================================================
-    // VALIDATION
-    // ============================================================================
-
-    // Check if shift exists
-    const shift = await db.query.shifts.findFirst({
-      where: eq(shifts.id, shiftId),
-    });
-
+    const shift = await getShift(shiftId);
     if (!shift) {
-      return {
-        success: false,
-        error: `Schicht ${shiftId} nicht gefunden`,
-      };
+      return { success: false, error: `Schicht ${shiftId} nicht gefunden` };
     }
-
-    // Check if already completed
     if (shift.status === 'completed') {
-      return {
-        success: false,
-        error: 'Schicht wurde bereits abgeschlossen',
-      };
+      return { success: false, error: 'Schicht wurde bereits abgeschlossen' };
+    }
+    if (await getAggregation(shiftId)) {
+      return { success: false, error: 'Aggregation für diese Schicht existiert bereits' };
     }
 
-    // Check if aggregation already exists
-    const existingAggregation = await db.query.shiftAggregations.findFirst({
-      where: eq(shiftAggregations.shiftId, shiftId),
-    });
-
-    if (existingAggregation) {
-      return {
-        success: false,
-        error: 'Aggregation für diese Schicht existiert bereits',
-      };
+    // ----- Step 1: gather reports -----
+    const reports = await getReportsByShift(shiftId);
+    if (reports.length === 0) {
+      return { success: false, error: 'Keine Worker-Reports für diese Schicht gefunden' };
     }
 
-    // ============================================================================
-    // STEP 1: FETCH ALL WORKER REPORTS
-    // ============================================================================
-
-    let reportFrontmatters;
+    // ----- Step 2: LLM credentials -----
+    let settings;
     try {
-      reportFrontmatters = await getAllReportsForShift(shiftId);
-    } catch (fsError) {
-      console.error('Error fetching reports from filesystem:', fsError);
-      return {
-        success: false,
-        error: `Fehler beim Laden der Reports: ${fsError instanceof Error ? fsError.message : 'Unbekannt'}`,
-      };
-    }
-
-    if (reportFrontmatters.length === 0) {
-      return {
-        success: false,
-        error: 'Keine Worker-Reports für diese Schicht gefunden',
-      };
-    }
-
-    // Also fetch from DB for additional metadata
-    const dbReports = await db.query.workerReports.findMany({
-      where: eq(workerReports.shiftId, shiftId),
-    });
-
-    if (dbReports.length !== reportFrontmatters.length) {
-      console.warn(
-        `Mismatch: ${reportFrontmatters.length} Markdown files vs ${dbReports.length} DB records`
-      );
-    }
-
-    // ============================================================================
-    // STEP 2: GET API KEY FOR AGENTS
-    // ============================================================================
-
-    let apiKey: string;
-    let llmProvider: 'anthropic' | 'openai' | 'gemini';
-
-    try {
-      const keyData = await getUserApiKey('BOSS');
-      apiKey = keyData.decrypted;
-      llmProvider = keyData.provider;
+      settings = await getLLMCredentials();
     } catch (keyError) {
-      console.error('API key retrieval error:', keyError);
+      console.error('LLM credential error:', keyError);
       return {
         success: false,
-        error: 'LLM API-Schlüssel nicht konfiguriert',
+        error: keyError instanceof Error ? keyError.message : 'LLM nicht konfiguriert',
       };
     }
 
-    // ============================================================================
-    // STEP 3: PREPARE SHIFT METADATA
-    // ============================================================================
-
+    // ----- Step 3: run aggregator + KPI agent -----
+    const dateStr = shift.date.split('T')[0];
     const shiftMeta = {
       shiftId,
-      date: shift.date.toISOString().split('T')[0],
+      date: dateStr,
       type: shift.type,
       projectName: shift.projectName,
-      totalWorkers: new Set(reportFrontmatters.map((r) => r.frontmatter.workerId)).size,
-      totalReports: reportFrontmatters.length,
     };
-
-    // ============================================================================
-    // STEP 4: RUN AGGREGATION PIPELINE (PARALLEL)
-    // ============================================================================
 
     let aggregationResult;
     try {
-      // Transform reports to match expected structure
-      const transformedReports = reportFrontmatters.map((r) => ({
-        workerName: r.frontmatter.workerName,
-        profession: r.frontmatter.profession,
-        content: r.content,
+      const agentReports = reports.map((r) => ({
+        workerName: r.workerName,
+        profession: r.profession,
+        content: r.cleanedText,
         frontmatter: {
-          location: r.frontmatter.location,
-          taskType: r.frontmatter.taskType,
-          materialUsed: r.frontmatter.materialUsed,
-          machineHours: r.frontmatter.machineHours,
-          delayMinutes: r.frontmatter.delayMinutes,
-          hindrance: r.frontmatter.hindrance,
+          location: r.location,
+          taskType: r.taskType,
+          materialUsed: r.materialUsed,
+          machineHours: r.machineHours,
+          delayMinutes: r.delayMinutes,
+          hindrance: r.hindrance,
         },
       }));
 
       aggregationResult = await processShiftCompletion(
-        {
-          reports: transformedReports,
-          shiftMeta: shiftMeta
-        },
-        apiKey,
-        llmProvider
+        { reports: agentReports, shiftMeta },
+        settings
       );
     } catch (agentError) {
       console.error('Agent pipeline error:', agentError);
@@ -188,11 +117,8 @@ export async function completeShift(
 
     const { aggregation: aggregationOutput, kpis: kpiOutput } = aggregationResult;
 
-    // ============================================================================
-    // STEP 5: SAVE AGGREGATION TO MARKDOWN
-    // ============================================================================
-
-    let summaryPath: string;
+    // ----- Step 4: persist flat-file artifacts (best-effort) -----
+    let summaryPath: string | undefined;
     try {
       summaryPath = await saveShiftAggregation(
         shiftId,
@@ -200,107 +126,48 @@ export async function completeShift(
         shift.type,
         aggregationOutput.summaryText
       );
+      await saveBossKPIs(shiftId, new Date(shift.date), kpiOutput);
     } catch (fsError) {
-      console.error('Error saving shift aggregation markdown:', fsError);
-      return {
-        success: false,
-        error: `Fehler beim Speichern der Schicht-Zusammenfassung: ${fsError instanceof Error ? fsError.message : 'Unbekannt'}`,
-      };
+      console.warn('Aggregation artifact write failed (non-fatal):', fsError);
     }
 
-    // ============================================================================
-    // STEP 6: SAVE BOSS KPIS TO JSON
-    // ============================================================================
+    // ----- Step 5: store record -----
+    const aggregation = await createAggregation({
+      shiftId,
+      summaryText: aggregationOutput.summaryText,
+      summaryMarkdownPath: summaryPath,
+      structuredSummary: {
+        completed: aggregationOutput.completed,
+        inProgress: aggregationOutput.inProgress,
+        blocked: aggregationOutput.blocked,
+        nextShiftActions: aggregationOutput.nextShiftActions,
+        criticalIssues: aggregationOutput.criticalIssues,
+      },
+      kpis: {
+        totalWorkers: kpiOutput.totalWorkers,
+        productivityScore: kpiOutput.productivityScore,
+        delayMinutes: kpiOutput.delayMinutes,
+        materialCostEUR: kpiOutput.materialCostEUR,
+        hindranceEvents: kpiOutput.hindranceEvents,
+        topPerformer: kpiOutput.topPerformer,
+        underperformer: kpiOutput.underperformer,
+        criticalHindrances: kpiOutput.criticalHindrances,
+      },
+    });
 
-    let kpisPath: string;
-    try {
-      kpisPath = await saveBossKPIs(
-        shiftId,
-        new Date(shift.date),
-        kpiOutput
-      );
-    } catch (fsError) {
-      console.error('Error saving boss KPIs:', fsError);
-      return {
-        success: false,
-        error: `Fehler beim Speichern der KPIs: ${fsError instanceof Error ? fsError.message : 'Unbekannt'}`,
-      };
-    }
-
-    // ============================================================================
-    // STEP 7: SAVE TO DATABASE
-    // ============================================================================
-
-    let aggregationId: string;
-    try {
-      aggregationId = crypto.randomUUID();
-
-      await db.insert(shiftAggregations).values({
-        id: aggregationId,
-        shiftId,
-        summaryMarkdownPath: summaryPath,
-        structuredSummary: {
-          completed: aggregationOutput.completed,
-          inProgress: aggregationOutput.inProgress,
-          blocked: aggregationOutput.blocked,
-          nextShiftActions: aggregationOutput.nextShiftActions,
-          criticalIssues: aggregationOutput.criticalIssues,
-        },
-        kpis: {
-          totalWorkers: kpiOutput.totalWorkers,
-          productivityScore: kpiOutput.productivityScore,
-          delayMinutes: kpiOutput.delayMinutes,
-          materialCostEUR: kpiOutput.materialCostEUR,
-          hindranceEvents: kpiOutput.hindranceEvents,
-          topPerformer: kpiOutput.topPerformer,
-          underperformer: kpiOutput.underperformer,
-        },
-      });
-    } catch (dbError) {
-      console.error('Database insert error (aggregation):', dbError);
-      return {
-        success: false,
-        error: `Datenbank-Fehler: ${dbError instanceof Error ? dbError.message : 'Unbekannt'}`,
-      };
-    }
-
-    // ============================================================================
-    // STEP 8: UPDATE SHIFT STATUS
-    // ============================================================================
-
-    try {
-      await db
-        .update(shifts)
-        .set({
-          status: 'completed',
-          completedAt: new Date(),
-        })
-        .where(eq(shifts.id, shiftId));
-    } catch (dbError) {
-      console.error('Database update error (shift status):', dbError);
-      // Aggregation was saved, but status update failed - log for manual fix
-      console.warn(
-        `Shift ${shiftId} aggregation created but status not updated. Manual intervention needed.`
-      );
-    }
-
-    // ============================================================================
-    // SUCCESS
-    // ============================================================================
+    // ----- Step 6: mark shift completed -----
+    await updateShift(shiftId, { status: 'completed', completedAt: new Date().toISOString() });
 
     return {
       success: true,
-      aggregationId,
-      summaryPath,
-      kpisPath,
+      aggregationId: aggregation.id,
       stats: {
-        totalReports: reportFrontmatters.length,
+        totalReports: reports.length,
         totalWorkers: kpiOutput.totalWorkers,
         productivityScore: kpiOutput.productivityScore,
         hindranceEvents: kpiOutput.hindranceEvents,
       },
     };
-
   } catch (error) {
     console.error('Unexpected error in completeShift:', error);
     return {
@@ -315,51 +182,26 @@ export async function completeShift(
  */
 export async function getShiftAggregation(shiftId: string) {
   try {
-    const aggregation = await db.query.shiftAggregations.findFirst({
-      where: eq(shiftAggregations.shiftId, shiftId),
-    });
-
+    const aggregation = await getAggregation(shiftId);
     if (!aggregation) {
-      return {
-        success: false,
-        error: 'Aggregation nicht gefunden',
-      };
+      return { success: false as const, error: 'Aggregation nicht gefunden' };
     }
-
-    return {
-      success: true,
-      data: aggregation,
-    };
+    return { success: true as const, data: aggregation };
   } catch (error) {
     console.error('Error fetching shift aggregation:', error);
-    return {
-      success: false,
-      error: `Fehler: ${error instanceof Error ? error.message : 'Unbekannt'}`,
-    };
+    return { success: false as const, error: `Fehler: ${error instanceof Error ? error.message : 'Unbekannt'}` };
   }
 }
 
 /**
- * Get all shifts for Boss dashboard
+ * Get all shifts (newest first) joined with KPIs — for the Boss dashboard.
  */
 export async function getAllShiftsWithKPIs() {
   try {
-    const allShifts = await db.query.shifts.findMany({
-      with: {
-        aggregation: true,
-      },
-      orderBy: (shifts, { desc }) => [desc(shifts.date)],
-    });
-
-    return {
-      success: true,
-      data: allShifts,
-    };
+    const data = await listShiftsWithAggregations();
+    return { success: true as const, data };
   } catch (error) {
     console.error('Error fetching shifts with KPIs:', error);
-    return {
-      success: false,
-      error: `Fehler: ${error instanceof Error ? error.message : 'Unbekannt'}`,
-    };
+    return { success: false as const, error: `Fehler: ${error instanceof Error ? error.message : 'Unbekannt'}` };
   }
 }

@@ -11,6 +11,8 @@ coverage/
 out/
 build/
 dist/
+next-env.d.ts
+*.tsbuildinfo
 
 # Production
 .vercel

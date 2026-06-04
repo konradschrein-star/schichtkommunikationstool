@@ -1,5 +1,31 @@
 # Projekt Masterplan: "ShiftSync MVP"
 
+> ## ⭐ STAND 2026-06-05 — präsentationsfähiges lokales MVP (lies das zuerst)
+>
+> **Arbeitskopie:** `C:\Users\konra\dev\schichtkommunikationstool` (frischer GitHub-Clone).
+> NICHT im OneDrive-Ordner arbeiten — der ist korrupt (Lese-/Sync-Fehler).
+>
+> **Architektur jetzt (kostenlos & lokal):**
+> - **Keine Postgres-Abhängigkeit mehr.** Laufzeit-Daten liegen als Flat-File-Store unter
+>   `data/db/*.json` (`src/lib/store.ts`); Worker-Berichte zusätzlich als getaggte Markdown-Dateien.
+>   Das Drizzle-Schema (`src/db/`) bleibt nur für späteres Hosting liegen, wird zur Laufzeit nicht genutzt.
+> - **LLM:** ein Provider-Abstraktion mit `baseUrl`/`model` (`src/agents/llm-clients.ts`, Typ `LLMSettings`).
+>   Default-Provider **gemini** (VPS). Schlüssel kommt aus den **Einstellungen** (`/settings`, schreibt
+>   `data/db/config.json`) oder aus `.env.local` (`GEMINI_API_KEY`, `GEMINI_BASE_URL`, `GEMINI_MODEL`).
+>   Auflösung in `src/lib/api-keys.ts → getLLMCredentials()`. Keine DB-/KMS-Keys mehr.
+> - **Transkription:** weiterhin lokales **faster-whisper** (`whisper-service/main.py`, Port 8000, kein Docker).
+> - **Auth:** Cookie-basierte Konto-Auswahl (`app/actions/session.ts`, `src/lib/session.ts`), keine Passwörter.
+>
+> **Starten:** `node scripts/seed.mjs` (Demo-Daten) → `npm run dev` → http://localhost:3000.
+> **Demo:** siehe `DEMO_SCRIPT.md`. Seed = eine vollständige Gleisbau-Nachtschicht (inkl. polnischer
+> Baggerfahrer / Abwasserrohr / ~500 € Leakage), 7 abgeschlossene Schichten für KPIs, 1 aktive Schicht.
+>
+> **Routen:** `/` (Login) · `/worker` · `/shift-leader` · `/report/[id]` · `/boss/dashboard` ·
+> `/settings` · `/ideas`.
+>
+> **Noch offen für 100 % live:** (1) echten VPS-Gemini-Key in `/settings` oder `.env.local` eintragen;
+> (2) `whisper-service` starten (Python). Ohne beides ist die geseedete Demo bereits voll vorführbar.
+
 ## 1. Projektübersicht & Ziel
 Wir bauen ein MVP für Baudokumentation. Fokus: Zero-Friction für Arbeiter, maximale Insights für das Management.
 Wir nutzen Sub-Agent Driven Development. Jeder Agent ist für eine isolierte Komponente zuständig. Wir iterieren schnell und testen direkt im Browser.

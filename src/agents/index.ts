@@ -39,6 +39,7 @@ export {
   createLLMClient,
   type LLMProvider,
   type LLMClient,
+  type LLMSettings,
 } from './llm-clients';
 
 // Export prompts (for customization if needed)

@@ -1,24 +1,22 @@
 /**
- * Worker Report Server Actions
+ * Worker Report Server Action
  *
- * Handles the complete worker report submission pipeline:
+ * Pipeline:
  * 1. Transcribe audio via Whisper
- * 2. Run QA Agent (validate completeness)
+ * 2. QA Agent (validate completeness)
  * 3. Translate if Polish
- * 4. Run Cleaner Agent (format professional report)
- * 5. Save to DB + Markdown file
+ * 4. Cleaner Agent (professional report + structured data)
+ * 5. Persist as Markdown file + flat-file store record
  */
 
 'use server';
 
-import { db } from '@/db';
-import { workerReports, shifts } from '@/db/schema';
 import { saveWorkerReport } from '@/lib/filesystem';
 import { transcribeAudio } from '@/lib/whisper';
-import { getUserApiKey } from '@/lib/api-keys';
+import { getLLMCredentials } from '@/lib/api-keys';
 import { processWorkerReport } from '@/agents/workflow';
-import { createInitialFrontmatter, type MarkdownFrontmatter } from '@/types/markdown';
-import { eq } from 'drizzle-orm';
+import { getShift, createWorkerReport } from '@/lib/store';
+import { type MarkdownFrontmatter } from '@/types/markdown';
 
 interface SubmitWorkerReportInput {
   audioPath: string;
@@ -33,10 +31,7 @@ interface SubmitWorkerReportSuccess {
   success: true;
   reportId: string;
   markdownPath: string;
-  qaResult: {
-    isComplete: boolean;
-    confidence: number;
-  };
+  qaResult: { isComplete: boolean; confidence: number };
 }
 
 interface SubmitWorkerReportNeedsInput {
@@ -62,43 +57,22 @@ export async function submitWorkerReport(
   try {
     const { audioPath, imagePaths, workerId, shiftId, workerName, profession } = input;
 
-    // ============================================================================
-    // VALIDATION
-    // ============================================================================
-
-    // Validate shift exists
-    const shift = await db.query.shifts.findFirst({
-      where: eq(shifts.id, shiftId),
-    });
-
+    // ----- Validate shift -----
+    const shift = await getShift(shiftId);
     if (!shift) {
-      return {
-        success: false,
-        error: `Shift ${shiftId} not found`,
-      };
+      return { success: false, error: `Schicht ${shiftId} nicht gefunden` };
     }
 
-    // ============================================================================
-    // STEP 1: TRANSCRIBE AUDIO
-    // ============================================================================
-
+    // ----- Step 1: Transcribe -----
     let transcript: string;
-    let detectedLanguage: string;
     let normalizedLanguage: 'de' | 'pl';
-
     try {
       const whisperResult = await transcribeAudio(audioPath);
       transcript = whisperResult.transcript;
-      detectedLanguage = whisperResult.language;
-
-      // Normalize language to supported values ('de' or 'pl')
-      normalizedLanguage = detectedLanguage === 'pl' ? 'pl' : 'de';
+      normalizedLanguage = whisperResult.language === 'pl' ? 'pl' : 'de';
 
       if (!transcript || transcript.trim().length === 0) {
-        return {
-          success: false,
-          error: 'Transkription fehlgeschlagen: Leerer Text',
-        };
+        return { success: false, error: 'Transkription fehlgeschlagen: Leerer Text' };
       }
     } catch (whisperError) {
       console.error('Whisper transcription error:', whisperError);
@@ -108,45 +82,32 @@ export async function submitWorkerReport(
       };
     }
 
-    // ============================================================================
-    // STEP 2: GET API KEY FOR AGENT PIPELINE
-    // ============================================================================
-
-    let apiKey: string;
-    let llmProvider: 'anthropic' | 'openai' | 'gemini';
-
+    // ----- Step 2: LLM credentials -----
+    let settings;
     try {
-      const keyData = await getUserApiKey('BOSS');
-      apiKey = keyData.decrypted;
-      llmProvider = keyData.provider;
+      settings = await getLLMCredentials();
     } catch (keyError) {
-      console.error('API key retrieval error:', keyError);
+      console.error('LLM credential error:', keyError);
       return {
         success: false,
-        error: 'LLM API-Schlüssel nicht konfiguriert. Bitte in den Einstellungen hinterlegen.',
+        error: keyError instanceof Error ? keyError.message : 'LLM nicht konfiguriert',
       };
     }
 
-    // ============================================================================
-    // STEP 3: RUN AGENT PIPELINE (QA + CLEANER)
-    // ============================================================================
-
-    const frontmatterPartial = {
-      workerId,
-      workerName,
-      profession,
-      shiftId,
-      shiftType: shift.type,
-      language: normalizedLanguage,
-    };
-
+    // ----- Step 3: Agent pipeline (QA + translate + cleaner) -----
     let agentResult;
     try {
       agentResult = await processWorkerReport(
         transcript,
-        frontmatterPartial,
-        apiKey,
-        llmProvider
+        {
+          workerId,
+          workerName,
+          profession,
+          shiftId,
+          shiftType: shift.type,
+          language: normalizedLanguage,
+        },
+        settings
       );
     } catch (agentError) {
       console.error('Agent pipeline error:', agentError);
@@ -156,10 +117,7 @@ export async function submitWorkerReport(
       };
     }
 
-    // ============================================================================
-    // STEP 4: CHECK QA RESULT
-    // ============================================================================
-
+    // ----- Step 4: QA gate -----
     if (!agentResult.qaResult.isComplete) {
       return {
         success: false,
@@ -168,21 +126,15 @@ export async function submitWorkerReport(
         partialTranscript: transcript,
       };
     }
-
-    // QA passed, must have cleaner result
     if (!agentResult.cleanerResult) {
-      return {
-        success: false,
-        error: 'Cleaner-Agent lieferte kein Ergebnis trotz bestandener QA',
-      };
+      return { success: false, error: 'Cleaner-Agent lieferte kein Ergebnis trotz bestandener QA' };
     }
 
-    // ============================================================================
-    // STEP 5: CONSTRUCT FULL FRONTMATTER
-    // ============================================================================
-
+    // ----- Step 5: Build frontmatter -----
     const now = new Date();
     const reportId = crypto.randomUUID();
+    const cleaned = agentResult.cleanerResult;
+    const hindrance = cleaned.structuredData.hindrances?.some((h) => h.isVOBRelevant) || false;
 
     const frontmatter: MarkdownFrontmatter = {
       id: reportId,
@@ -194,40 +146,21 @@ export async function submitWorkerReport(
       timestamp: now.toISOString(),
       shiftType: shift.type,
       language: normalizedLanguage,
-
-      // Extracted from Cleaner Agent
-      location: agentResult.cleanerResult.structuredData.location,
-      taskType: agentResult.cleanerResult.structuredData.taskType as any,
-
-      // Optional fields (extracted from hindrances or set to undefined)
-      materialUsed: undefined, // Not extracted by cleaner agent
-      machineHours: undefined, // Not extracted by cleaner agent
-      delayMinutes: undefined, // Could be calculated from hindrances in future
-      hindrance: agentResult.cleanerResult.structuredData.hindrances?.some(h => h.isVOBRelevant) || false,
-      tags: undefined, // Not extracted by cleaner agent
-
-      // Media
+      location: cleaned.structuredData.location,
+      taskType: cleaned.structuredData.taskType as MarkdownFrontmatter['taskType'],
+      hindrance,
       audioFile: audioPath,
       imageFiles: imagePaths,
     };
 
-    // ============================================================================
-    // STEP 6: SAVE TO MARKDOWN FILE
-    // ============================================================================
-
+    // ----- Step 6: Save Markdown -----
     let markdownPath: string;
-
     try {
-      markdownPath = await saveWorkerReport(
-        workerId,
-        now,
-        frontmatter,
-        {
-          rawTranscript: transcript,
-          translatedText: agentResult.translatedText || '',
-          cleanedText: agentResult.cleanerResult.cleanedText,
-        }
-      );
+      markdownPath = await saveWorkerReport(workerId, now, frontmatter, {
+        rawTranscript: transcript,
+        translatedText: agentResult.translatedText || '',
+        cleanedText: cleaned.cleanedText,
+      });
     } catch (fsError) {
       console.error('Filesystem save error:', fsError);
       return {
@@ -236,46 +169,35 @@ export async function submitWorkerReport(
       };
     }
 
-    // ============================================================================
-    // STEP 7: SAVE TO DATABASE
-    // ============================================================================
-
+    // ----- Step 7: Save store record -----
     try {
-      await db.insert(workerReports).values({
+      await createWorkerReport({
         id: reportId,
         shiftId,
         workerId,
+        workerName,
+        profession,
+        language: normalizedLanguage,
         markdownPath,
         audioPath,
+        imagePaths,
         rawTranscript: transcript,
-        translatedTranscript: agentResult.translatedText || null,
-        cleanedText: agentResult.cleanerResult.cleanedText,
+        translatedTranscript: agentResult.translatedText || undefined,
+        cleanedText: cleaned.cleanedText,
         qaStatus: 'approved',
-        qaFeedback: {
-          confidence: agentResult.qaResult.confidence,
-          missingFields: [],
-        },
-        frontmatterTags: {
-          location: frontmatter.location,
-          taskType: frontmatter.taskType,
-          materialUsed: frontmatter.materialUsed,
-          hindrance: frontmatter.hindrance,
-          estimatedDelay: frontmatter.delayMinutes,
-        },
-        status: 'CLEANED',
+        qaConfidence: agentResult.qaResult.confidence,
+        location: cleaned.structuredData.location,
+        taskType: cleaned.structuredData.taskType,
+        hindrance,
+        createdAt: now.toISOString(),
       });
-    } catch (dbError) {
-      console.error('Database insert error:', dbError);
-      // Markdown file is saved, but DB failed - log this for manual recovery
+    } catch (storeError) {
+      console.error('Store write error:', storeError);
       return {
         success: false,
-        error: `Datenbank-Fehler: ${dbError instanceof Error ? dbError.message : 'Unbekannter Fehler'}. Markdown-Datei wurde trotzdem gespeichert unter: ${markdownPath}`,
+        error: `Speicherung fehlgeschlagen: ${storeError instanceof Error ? storeError.message : 'Unbekannter Fehler'}. Markdown wurde gespeichert: ${markdownPath}`,
       };
     }
-
-    // ============================================================================
-    // SUCCESS
-    // ============================================================================
 
     return {
       success: true,
@@ -286,7 +208,6 @@ export async function submitWorkerReport(
         confidence: agentResult.qaResult.confidence,
       },
     };
-
   } catch (error) {
     console.error('Unexpected error in submitWorkerReport:', error);
     return {
